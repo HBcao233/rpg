@@ -542,7 +542,8 @@ figure {
   transform: scale(0.95);
 }
 
-.dice.disabled {
+.dice.disabled,
+.dice.disabled_dice {
   opacity: .3;
 }
 .dice.active {
@@ -1249,4 +1250,168 @@ label {
 }
 .save_time {
   flex-shrink: 0;
+}
+
+
+
+.battle-tools {
+  display: flex;
+}
+.battle-tools .slider-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.battle-tools .value-display {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #fff;
+  margin: 30px auto;
+  transition: all 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.battle-tools .value-number {
+  font-size: 2em;
+  font-weight: bold;
+  color: #667eea;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.metronome .value-number::after {
+  content: 'bpm';
+  position: absolute;
+  bottom: -10px;
+  font-size: 15px;
+}
+.timer .value-number::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: url('/static/svg/play.svg') no-repeat;
+  background-size: cover;
+}
+.timer.playing .value-number::after {
+  background-image: url('/static/svg/pause.svg');
+}
+
+.circular-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.circular-slider svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circular-slider .track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);;
+  stroke-width: 20;
+  stroke-linecap: round;
+}
+
+.circular-slider .progress {
+  fill: none;
+  stroke: #667eea;
+  stroke-width: 20;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.1s ease;
+}
+
+.circular-slider .handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+}
+
+.circular-slider .handle:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.circular-slider .value-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px; 
+  height: 100px;
+  border-radius: 50%;
+  margin: 0;
+}
+
+.circular-slider .marks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.circular-slider .mark {
+  position: absolute;
+  color: #fff;
+  font-size: 8px;
+  font-weight: bold;
+  transform: translate(-50%, -50%);
+}
+
+.metronome .beat-indicator.active {
+  background: #667eea;
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+}
+
+
+
+.battle-tools .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.battle-tools .btn {
+  margin: 0 3px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  text-align: center;
+}
+
+.metronome select {
+  margin: 0 5px;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  color: #fff;
+  background: #667eea;
 }

@@ -1794,7 +1794,7 @@ document.addEventListener('click', (e) => {
   switch (true) {
     // 掷骰子
     case !!e.target.closest('.dice'):
-      if (e.target.classList.contains('disabled')) return;
+      if (e.target.classList.contains('disabled') || e.target.classList.contains('disabled_dice')) return;
       const dice = e.target.closest('.dice');
       const sides = parseInt(dice.getAttribute('data-sides'))
       if (dice.rolling) return;
@@ -2409,4 +2409,409 @@ function cutElementText(str, maxLength = 100) {
   }
   if (flag || totalLength >= maxLength) result += '...';
   return result;
+}
+
+class CircularSlider {
+  constructor(selector, minValue, maxValue, initValue, formatter) {
+    this.container = $(selector);
+    this.slider = this.container.querySelector('.circular-slider');
+    this.handle = this.container.querySelector('.handle');
+    this.progress = this.container.querySelector('.progress');
+    this.valueDisplay = this.container.querySelector('.value-number');
+    
+    const width = this.container.querySelector('.slider-container').clientWidth
+    this.centerX = width / 2;
+    this.centerY = width / 2;
+    this.radius = width / 2 - 15;
+    this.minValue = 40;
+    if (minValue) this.minValue = minValue;
+    this.maxValue = 240;
+    if (maxValue) this.maxValue = maxValue;
+    this.currentValue = 60;
+    if (initValue) this.currentValue = initValue;
+    this.isDragging = false;
+    this.formatter = formatter;
+    
+    this.circumference = 2 * Math.PI * (width - 20);
+    this.progress.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
+    
+    this.lastAngle = 0;
+    this.totalRotation = 0;
+    this.isLocked = false; // 是否锁定在边界
+    this.disabled = false;
+    this.init();
+  }
+  get value() {
+    return this.currentValue;
+  }
+  set value(v) {
+    this.currentValue = v;
+    this.updateSlider(this.currentValue)
+  }
+  
+  init() {
+    this.updateSlider(this.currentValue);
+    this.lastAngle = this.valueToAngle(this.currentValue);
+    
+    this.handle.addEventListener('mousedown', this.startDrag.bind(this));
+    document.addEventListener('mousemove', this.drag.bind(this));
+    document.addEventListener('mouseup', this.endDrag.bind(this));
+    
+    this.handle.addEventListener('touchstart', this.startDrag.bind(this));
+    document.addEventListener('touchmove', this.drag.bind(this));
+    document.addEventListener('touchend', this.endDrag.bind(this));
+    
+    this.slider.addEventListener('click', this.handleClick.bind(this));
+  }
+  
+  startDrag(e) {
+    e.preventDefault();
+    if (this.disabled) return;
+    this.isDragging = true;
+    this.isLocked = false;
+  }
+  
+  drag(e) {
+    if (this.disabled) return;
+    if (!this.isDragging) return;
+    
+    const rect = this.slider.getBoundingClientRect();
+    let clientX, clientY;
+    
+    if (e.type.includes('touch')) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    
+    const x = clientX - rect.left - this.centerX;
+    const y = clientY - rect.top - this.centerY;
+    
+    let angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+    if (angle < 0) angle += 360;
+    
+    // 限制角度跳变
+    angle = this.constrainAngle(angle);
+    
+    const value = this.angleToValue(angle);
+    this.updateSlider(value);
+  }
+  
+  endDrag() {
+    this.isDragging = false;
+  }
+  
+  handleClick(e) {
+    if (this.disabled) return;
+    if (e.target === this.handle) return;
+    
+    const rect = this.slider.getBoundingClientRect();
+    const x = e.clientX - rect.left - this.centerX;
+    const y = e.clientY - rect.top - this.centerY;
+    
+    let angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+    if (angle < 0) angle += 360;
+    
+    // 限制角度跳变
+    angle = this.constrainAngle(angle);
+    
+    const value = this.angleToValue(angle);
+    this.updateSlider(value);
+  }
+  
+  constrainAngle(newAngle) {
+    // 计算角度差
+    let angleDiff = newAngle - this.lastAngle;
+    
+    // 处理跨越0/360度边界的情况
+    if (angleDiff > 180) {
+      // 从小角度跳到大角度（逆时针跨越0度）
+      angleDiff -= 360;
+    } else if (angleDiff < -180) {
+      // 从大角度跳到小角度（顺时针跨越360度）
+      angleDiff += 360;
+    }
+    
+    // 检测是否试图跨越边界
+    const predictedAngle = this.lastAngle + angleDiff;
+    
+    // 如果预测角度超过360度或小于0度，限制在边界
+    if (predictedAngle >= 360) {
+      // 停在最大值（360度对应maxValue）
+      this.isLocked = true;
+      return 359.99; // 接近360但不等于360，避免数值问题
+    } else if (predictedAngle < 0) {
+      // 停在最小值（0度对应minValue）
+      this.isLocked = true;
+      return 0;
+    }
+    
+    // 如果已经锁定在边界，检查是否要解锁
+    if (this.isLocked) {
+      // 如果在最大值边界，只有向减小方向移动才解锁
+      if (this.lastAngle > 350 && angleDiff < -10) {
+        this.isLocked = false;
+      }
+      // 如果在最小值边界，只有向增大方向移动才解锁
+      else if (this.lastAngle < 10 && angleDiff > 10) {
+        this.isLocked = false;
+      } else {
+        // 保持锁定状态
+        return this.lastAngle;
+      }
+    }
+    
+    this.lastAngle = newAngle;
+    return newAngle;
+  }
+  
+  angleToValue(angle) {
+    const range = this.maxValue - this.minValue;
+    const value = (angle / 360) * range + this.minValue;
+    return Math.round(value);
+  }
+  
+  valueToAngle(value) {
+    const range = this.maxValue - this.minValue;
+    const angle = ((value - this.minValue) / range) * 360;
+    return angle;
+  }
+  
+  updateSlider(value) {
+    value = Math.max(this.minValue, Math.min(this.maxValue, value));
+    this.currentValue = value;
+    const event = new CustomEvent('input', {
+      bubbles: true,
+      detail: { value: value },
+    });
+    this.slider.value = value;
+    this.slider.dispatchEvent(event);
+    
+    const angle = this.valueToAngle(value);
+    const angleRad = (angle - 90) * (Math.PI / 180);
+    
+    const handleX = this.centerX + this.radius * Math.cos(angleRad);
+    const handleY = this.centerY + this.radius * Math.sin(angleRad);
+    
+    this.handle.style.left = handleX + 'px';
+    this.handle.style.top = handleY + 'px';
+    
+    const dashOffset = this.circumference - (angle / 360) * this.circumference;
+    this.progress.style.strokeDashoffset = dashOffset;
+    
+    let formatter = Math.round;
+    if (this.formatter) formatter = this.formatter;
+    this.valueDisplay.textContent = formatter(value);
+  }
+  
+  addEventListener(event_name, func, flag) {
+    this.slider.addEventListener(event_name, func, flag);
+  }
+}
+
+class Timer {
+  constructor() {
+    this.slider = new CircularSlider('.timer', 30, 1800, 300, formatTime);
+    this.isPlaying = false;
+    this.timer = null;
+    this.value = 30;
+    this.audioElement = tag('audio', {
+      attrs: {
+        src: '/static/audios/clock.wav',
+        preload: 'auto',
+        loop: '',
+      },
+    });
+    document.body.appendChild(this.audioElement);
+    this.init();
+  }
+  
+  init() {
+    $('.timer').addEventListener('click', (e) => {
+      if (!e.target.closest('.btn')) return;
+      let amount = parseInt(e.target.getAttribute('data-amount'));
+      if (this.isPlaying)
+       amount = amount / this.value * 1770;
+      this.adjustValue(amount);
+    });
+    $('.timer .value-display').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.toggleTimer();
+    })
+  }
+  
+  adjustValue(amount) {
+    let newValue = parseInt(this.slider.value) + amount;
+    newValue = Math.max(30, Math.min(1800, newValue));
+    this.slider.value = newValue;
+    if (!this.isPlaying) this.value = newValue;
+  }
+  
+  toggleTimer() {
+    this.isPlaying = !this.isPlaying;
+    this.slider.disabled = this.isPlaying;
+    if (this.isPlaying) {
+      clearTimeout(this.timer);
+      $('.timer').classList.add('playing')
+      this.slider.formatter = (value) => {
+        const percentage = (value - 30) / 1770;
+        return formatTime(percentage * this.value)
+      }
+      this.value = this.slider.value;
+      this.slider.value = 1800;
+      this.timer = setInterval(this.intervalTimer.bind(this), 1000);
+    } else {
+      if (!this.audioElement.paused) this.audioElement.pause();
+      $('.timer').classList.remove('playing');
+      clearTimeout(this.timer);
+      this.slider.formatter = formatTime;
+      this.slider.value = this.value;
+    }
+  }
+  
+  intervalTimer() {
+    this.slider.value -= 1 / this.value * 1770 - 1;
+    if (this.slider.value <= 30) this.endTimer();
+  }
+  
+  endTimer() {
+    clearTimeout(this.timer);
+    this.audioElement.currentTime = 0;
+    this.audioElement.play();
+  }
+}
+
+class Metronome {
+  constructor() {
+    this.bpmSlider = new CircularSlider('.metronome'); 
+    this.bpmValue = document.getElementById('bpmValue');
+    this.beatIndicator = document.getElementById('beatIndicator');
+    this.beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    this.isPlaying = false;
+    // 当前拍
+    this.currentBeat = 0;
+    // 当前 bpm
+    this.bpm = parseInt(this.bpmSlider.value);
+    // 节拍
+    this.beatsPerMeasure = 4;
+    // 下一拍时间
+    this.nextNoteTime = 0.0;
+    // 调度器多久检查一次是否需要安排新的节拍
+    this.lookahead = 25.0; // 毫秒
+    // 提前多长时间将音频事件加入到播放队列
+    this.scheduleAheadTime = 0.1; // 秒
+    this.timer = null;
+    this.init();
+  }
+  
+  init() {
+    $('.metronome').addEventListener('click', (e) => {
+      if (!e.target.closest('.btn')) return;
+      const amount = parseInt(e.target.getAttribute('data-amount'));
+      this.adjustBPM(amount);
+    });
+    this.bpmSlider.addEventListener('input', this.updateBPM.bind(this));
+    this.beatsPerMeasureSelect.addEventListener('change', (e) => {
+      this.beatsPerMeasure = parseInt(e.target.value);
+      this.currentBeat = 0;
+    });
+    this.beatIndicator.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.toggleMetronome();
+    });
+  }
+  
+  /**
+   * 开关节拍器
+   */
+  toggleMetronome() {
+    this.isPlaying = !this.isPlaying;
+    if (this.isPlaying) {
+      this.currentBeat = 0;
+      this.nextNoteTime = this.audioContext.currentTime;
+      this.scheduler();
+    } else {
+      clearTimeout(this.timer);
+    }
+  }
+  /**
+   * 调度器
+   */
+  scheduler() {
+    while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+      this.scheduleNote(this.currentBeat, this.nextNoteTime);
+      this.nextNote();
+    }
+    this.timer = setTimeout(this.scheduler.bind(this), this.lookahead);
+  }
+  /**
+   * 调度节拍
+   */
+  scheduleNote(beatNumber, time) {
+    this.playNote(time, beatNumber);
+    
+    // 视觉反馈
+    if (time - this.audioContext.currentTime < 0.1) {
+      setTimeout(() => {
+        this.beatIndicator.classList.add('active');
+        setTimeout(() => {
+          this.beatIndicator.classList.remove('active');
+        }, 100);
+      }, (time - this.audioContext.currentTime) * 1000);
+    }
+  }
+  /**
+   * 计算下一个节拍时间
+   */
+  nextNote() {
+    const secondsPerBeat = 60.0 / this.bpm;
+    this.nextNoteTime += secondsPerBeat;
+    
+    this.currentBeat++;
+    if (this.currentBeat === this.beatsPerMeasure) {
+      this.currentBeat = 0;
+    }
+  }
+  
+  playNote(time, beatNumber) {
+    const osc = this.audioContext.createOscillator();
+    const envelope = this.audioContext.createGain();
+    osc.connect(envelope);
+    envelope.connect(this.audioContext.destination);
+    
+    // 第一拍音调更高
+    if (beatNumber === 0) {
+      osc.frequency.value = 1000;
+    } else {
+      osc.frequency.value = 800;
+    }
+    
+    envelope.gain.setValueAtTime(1, time);
+    envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+    
+    osc.start(time);
+    osc.stop(time + 0.05);
+  }
+  
+  /**
+   * 调整BPM
+   */
+  adjustBPM(amount) {
+    let newBPM = parseInt(this.bpmSlider.value) + amount;
+    newBPM = Math.max(40, Math.min(240, newBPM));
+    this.bpmSlider.value = newBPM;
+    console.log(parseInt(this.bpmSlider.value))
+    this.updateBPM();
+  }
+  
+  /**
+   * 更新BPM显示
+   */
+  updateBPM() {
+    this.bpm = parseInt(this.bpmSlider.value);
+    this.bpmValue.textContent = this.bpm;
+  }
 }

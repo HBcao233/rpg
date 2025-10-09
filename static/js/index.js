@@ -90,12 +90,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="dice_race" class="dice d6 disabled action" data-sides="6" data-action="random_race"></div>
     </div>
     <div class="row center dice2_selection" style="margin-top: 5px; display: none">
-      <div class="dice disabled d1 action" data-sides="6" data-action="change_race-1"></div>
-      <div class="dice disabled d2 action" data-sides="6" data-action="change_race-2"></div>
-      <div class="dice disabled d3 action" data-sides="6" data-action="change_race-3"></div>
-      <div class="dice disabled d4 action" data-sides="6" data-action="change_race-4"></div>
-      <div class="dice disabled d5 action" data-sides="6" data-action="change_race-5"></div>
-      <div class="dice disabled d6 action" data-sides="6" data-action="change_race-6"></div>
+      <div class="dice disabled_dice d1 action" data-sides="6" data-action="change_race-1"></div>
+      <div class="dice disabled_dice d2 action" data-sides="6" data-action="change_race-2"></div>
+      <div class="dice disabled_dice d3 action" data-sides="6" data-action="change_race-3"></div>
+      <div class="dice disabled_dice d4 action" data-sides="6" data-action="change_race-4"></div>
+      <div class="dice disabled_dice d5 action" data-sides="6" data-action="change_race-5"></div>
+      <div class="dice disabled_dice d6 action" data-sides="6" data-action="change_race-6"></div>
     </div>
   </div><div class="box race"></div>`,
       load: function () {
@@ -138,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function() {
           $('.dice').classList.remove('d6');
           $('.dice').classList.add('d' + save.history[i+1].dice);
           showEnemy(save.history[i+1].dice);
+          if (save.history[i+2] && save.history[i+2].action == 'attack_enemy') {
+            $('.dice[data-action="attack_enemy"]').classList.add('disabled');
+            $('.dice[data-action="attack_enemy"]').classList.remove('d6');
+            $('.dice[data-action="attack_enemy"]').classList.add('d' + save.history[i+2].dice);
+            attackEnemy(save.history[i+2].dice);
+          }
         }
       }
     }
@@ -354,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
    * 执行玩家操作
    */
   function executeAction() {
-    if (this.classList.contains('disabled')) return;
+    if (this.classList.contains('disabled') && !this.classList.contains('disabled_dice')) return;
     [action, arg] = (this.getAttribute('data-action') || '').split('-', 1);
     // console.log('action:', action, 'arg:', arg)
     switch (action) {
@@ -436,7 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }));
     setTimeout(() => {
       updateSectionHeight()
-      
     }, 100);
     
     const rs = [
@@ -444,6 +449,10 @@ document.addEventListener('DOMContentLoaded', function() {
       ['witch', 'succubus', 'asceticist', 'zombie', 'corrupted', 'robot'],
     ];
     save.race_key = rs[save.camp-1][save.race-1];
+    save.history.push({
+      type: 'select_race',
+      race: save.race_key,
+    })
     const r = race_info[save.race_key];
     save.player = {
       hp: r.hp,
@@ -862,12 +871,125 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * 显示敌人
    */
+  let current_enemy = null;
   function showEnemy(dice) {
-    const enemy_key = current_enemys[dice - 1];
-    const enemy = enemys[enemy_key];
+    current_enemy = current_enemys[dice - 1];
+    const enemy = enemys[current_enemy];
     $('section:last-child .box').appendChild(tag('p', {
       innerHTML: `<span class="color_enemy">${enemy.name}</span> 出现了！`,
-    }))
+    }));
+    $('section:last-child .box').appendChild(tag('div', {
+      class: 'image_box',
+      innerHTML: `<img src="/static/images/enemy_${current_enemy}.png">`,
+    }));
+    $('section:last-child .box').appendChild(tag('p', {
+      innerHTML: '你的回合，请投掷骰子:',
+    }));
+    $('section:last-child .box').appendChild(parseHTML(`<div class="dice d6" data-sides="6" data-action="attack_enemy" style="margin-left: 2em"></div>`)[0]);
+  }
+  function attackEnemy(dice) {
+    const attack_types = [
+      { name: '弱击', color: 'bad' }, 
+      { name:'有效', color: 'useful' }, 
+      { name: '会心', color: 'key' },
+    ];
+    const attack_type = Math.floor((dice - 1) / 2);
+    const attack_info = attack_types[attack_type];
+    const r = race_info[save.race_key];
+    const attack_details = r.active_skill[attack_type];
+    const arr = parseHTML(`<br><div class="text-center color_${attack_info.color}">[${attack_info.name}] ${attack_details.name}</div><p class="color_task">${attack_details.task}</p>`)
+    for (const i of arr) $('section:last-child .box').appendChild(i);
+    
+    
+    $('section:last-child .box').appendChild(tag('div', {
+      class: 'battle-tools',
+      innerHTML: `<div class="timer">
+  <div class="slider-container">
+    <div class="circular-slider">
+      <svg viewBox="0 0 300 300">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00f2fe;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="track" cx="150" cy="150" r="120"></circle>
+        <circle class="progress" cx="150" cy="150" r="120"></circle>
+      </svg>
+      <div class="handle"></div>
+      <div class="value-display">
+        <div class="value-number">60</div>
+      </div>
+      <div class="marks">
+        <span class="mark" style="top: 15px; left: 70px;">00:30</span>
+        <span class="mark" style="bottom: 1px; left: 70px;">15:15</span>
+        <span class="mark" style="top: 75px; left: 10px;">22:37</span>
+        <span class="mark" style="top: 75px; right: -10px;">07:52</span>
+        <span class="mark" style="top: 30px; left: 30px;">26:18</span>
+        <span class="mark" style="top: 31px; right: 10px;">04:11</span>
+        <span class="mark" style="bottom: 18px; left: 28px;">18:56</span>
+        <span class="mark" style="bottom: 20px; right: 10px;">11:33</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row center">
+    <button class="btn" data-amount="-30">-30</button>
+    <button class="btn" data-amount="30">+30</button>
+  </div>
+  
+</div>
+
+<div class="metronome">
+  <div class="slider-container">
+    <div class="circular-slider">
+      <svg viewBox="0 0 300 300">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00f2fe;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <circle class="track" cx="150" cy="150" r="120"></circle>
+        <circle class="progress" cx="150" cy="150" r="120"></circle>
+      </svg>
+      <div class="handle"></div>
+      <div class="beat-indicator value-display" id="beatIndicator">
+        <div class="bpm-display value-number" id="bpmValue">60</div>
+      </div>
+      <div class="marks">
+        <span class="mark" style="top: 15px; left: 70px;">40</span>
+        <span class="mark" style="bottom: 1px; left: 70px;">140</span>
+        <span class="mark" style="top: 75px; left: 15px;">190</span>
+        <span class="mark" style="top: 75px; right: 5px;">90</span>
+        <span class="mark" style="top: 31px; left: 31px;">215</span>
+        <span class="mark" style="top: 31px; right: 20px;">65</span>
+        <span class="mark" style="bottom: 20px; left: 31px;">165</span>
+        <span class="mark" style="bottom: 20px; right: 20px;">115</span>
+      </div>
+    </div>
+  </div>
+  <div class="row center">
+    <button class="btn" data-amount="-1">-1</button>
+    <button class="btn" data-amount="1">+1</button>
+    <select id="beatsPerMeasure">
+      <option value="2">2/4</option>
+      <option value="3">3/4</option>
+      <option value="4" selected>4/4</option>
+      <option value="6">6/8</option>
+    </select>
+  </div>
+</div>`,
+    }));
+    new Timer();
+    new Metronome();
+    
+    const arr1 = parseHTML(`<br><p class="action" data-action="attack_success">(1) 任务完成</p><p class="action" data-action="attack_fail">(2) 任务失败 / 不小心去了</p>`)
+    for (const i of arr1) $('section:last-child .box').appendChild(i);
+    setTimeout(updateSectionHeight, 100);
+  }
+  function beAttack() {
+    
   }
 
 
@@ -905,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
    * 骰子事件
    */
   document.addEventListener('dice', (e) => {
+    if (e.target.classList.contains('disabled') || e.target.classList.contains('disabled_dice')) return;
     let dice = e.detail.dice;
     e.target.classList.add('disabled');
     let action = e.target.getAttribute('data-action');
@@ -936,6 +1059,10 @@ document.addEventListener('DOMContentLoaded', function() {
       // 敌人 
       case 'random_enemy':
         showEnemy(dice);
+        break;
+      // 攻击敌人
+      case 'attack_enemy':
+        attackEnemy(dice);
         break;
     }
   });
