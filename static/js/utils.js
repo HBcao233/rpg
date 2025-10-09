@@ -2,7 +2,7 @@
 const items = {
   'coin': {
     name: '金币',
-    icon: 'icon_coin1',
+    icon: 'coin1',
     color: 'coin',
     background: 'common',
     caption: '咔～磬～',
@@ -11,7 +11,7 @@ const items = {
   },
   'cum': {
     name: '精液瓶',
-    icon: 'icon_mp_potion',
+    icon: 'mp_potion',
     color: '',
     background: 'common',
     caption: '我没有找到保险套的图标qwq',
@@ -20,7 +20,7 @@ const items = {
   },
   'honey': {
     name: '黏稠蜂蜜',
-    icon: 'icon_hp_potion',
+    icon: 'hp_potion',
     color: '',
     background: 'common',
     caption: '',
@@ -40,7 +40,7 @@ const items = {
   },
   'philter': {
     name: '浓缩媚药',
-    icon: 'icon_hp_potion',
+    icon: 'hp_potion',
     color: '',
     background: 'common',
     caption: '只需一滴，让你像水龙头一样射个不停，呵呵～',
@@ -55,7 +55,7 @@ const items = {
   },
   'scroll_climax': {
     name: '绝顶卷轴',
-    icon: 'icon_scroll',
+    icon: 'scroll',
     color: 'uncommon',
     background: 'scroll1',
     caption: '咿...!去了...!!',
@@ -70,7 +70,7 @@ const items = {
   },
   'scroll_': {
     name: '符文卷轴: 淫',
-    icon: 'icon_scroll',
+    icon: 'scroll',
     color: '',
     background: 'scroll2',
     caption: '',
@@ -85,7 +85,7 @@ const items = {
   },
   'herb': {
     name: '镇静草药',
-    icon: 'icon_herb',
+    icon: 'herb',
     color: '',
     background: 'common',
     caption: '暴风吸入吧!我的英雄!',
@@ -100,7 +100,7 @@ const items = {
   },
   'wine': {
     name: '镇静之酒',
-    icon: 'icon_hp_potion',
+    icon: 'hp_potion',
     color: 'uncommon',
     background: 'uncommon',
     caption: '',
@@ -115,7 +115,7 @@ const items = {
   },
   'juice': {
     name: '恢复药水',
-    icon: 'icon_hp_potion',
+    icon: 'hp_potion',
     color: '',
     background: 'common',
     caption: '其实基本就是果汁。',
@@ -130,7 +130,7 @@ const items = {
   },
   'milk': {
     name: '荷斯陶洛斯牛奶',
-    icon: 'icon_mp_potion',
+    icon: 'mp_potion',
     color: 'uncommon',
     background: 'uncommon',
     caption: '嗯～下次尝尝雄性荷斯陶洛斯的牛奶吧～',
@@ -150,7 +150,7 @@ const items = {
   },
   'spring': {
     name: '圣泉药剂',
-    icon: 'icon_spring_potion',
+    icon: 'spring_potion',
     color: '',
     background: 'epic',
     caption: '',
@@ -165,7 +165,7 @@ const items = {
   },
   'jerky': {
     name: '绿兽人的肉干',
-    icon: 'icon_jerky',
+    icon: 'jerky',
     color: '',
     background: 'uncommon',
     caption: '呕～那个绿兽人平时都把这玩意藏在哪啊!',
@@ -180,7 +180,7 @@ const items = {
   },
   'slave_key': {
     name: '奴隶钥匙',
-    icon: 'icon_key1',
+    icon: 'key1',
     color: '',
     background: 'epic',
     caption: '你真是一个不听话的奴隶。',
@@ -195,7 +195,7 @@ const items = {
   },
   'rope': {
     name: '逃生绳',
-    icon: 'icon_rope',
+    icon: 'rope',
     color: '',
     background: 'uncommon',
     caption: '它能保护你的后庭!',
@@ -210,7 +210,7 @@ const items = {
   },
   'chest_key': {
     name: '宝箱钥匙',
-    icon: 'icon_key2',
+    icon: 'key2',
     color: '',
     background: 'epic',
     caption: '好好搜刮宝箱里的物品吧!',
@@ -219,7 +219,7 @@ const items = {
   },
   'godness_dice': {
     name: '女神的骰子',
-    icon: 'icon_dice',
+    icon: 'dice',
     color: 'uncommon',
     background: 'epic',
     caption: '喂!你不能用那个!那是我的!',
@@ -234,7 +234,7 @@ const items = {
   },
   'herb2': {
     name: '净化草',
-    icon: 'icon_herb2',
+    icon: 'herb2',
     color: '',
     background: 'uncommon',
     caption: '你为什么要使用它呢？你很享受被侵犯的对吧～',
@@ -249,7 +249,7 @@ const items = {
   },
   'lucky_amulet': {
     name: '幸运护身符',
-    icon: 'icon_amulet',
+    icon: 'amulet',
     color: 'uncommon',
     background: 'epic',
     caption: '啊啊啊啊～～快把这个给我啊啊～～～',
@@ -795,6 +795,7 @@ const dick_props = [
 // 种族
 const race_info = {
   'princess': {
+    camp: 1,
     name: '人类: 王室公主',
     hp: 14, 
     atk: 2,
@@ -837,6 +838,7 @@ const race_info = {
     },
   },
   'wizard': {
+    camp: 1,
     name: '人类: 白浊法师',
     hp: 15,
     atk: 2,
@@ -879,6 +881,7 @@ const race_info = {
     },
   },
   'elf': {
+    camp: 1,
     name: '精灵: 暗夜窃贼',
     hp: 10,
     atk: 2, 
@@ -921,6 +924,7 @@ const race_info = {
     },
   },
   'dwarf': {
+    camp: 1,
     name: '矮人: 淬茎师',
     hp: 15,
     atk: 2,
@@ -963,6 +967,7 @@ const race_info = {
     },
   },
   'beastwoman': {
+    camp: 1,
     name: '兽人: 淫狐武士',
     hp: 15,
     atk: 2,
@@ -1005,6 +1010,7 @@ const race_info = {
     },
   },
   'holstaurus': {
+    camp: 1,
     name: '牛头人: 圣乳骑士',
     hp: 15,
     atk: 2,
@@ -1047,6 +1053,7 @@ const race_info = {
     },
   },
   'witch': {
+    camp: 2,
     name: '人类: 触装魔女',
     hp: 15,
     atk: 2,
@@ -1089,6 +1096,7 @@ const race_info = {
     },
   },
   'succubus': {
+    camp: 2,
     name: '莉莉姆: 饮精魅魔',
     hp: 15,
     atk: 2,
@@ -1131,6 +1139,7 @@ const race_info = {
     },
   },
   'asceticist': {
+    camp: 2,
     name: '人类: 禁欲教徒',
     hp: 20,
     atk: 2,
@@ -1173,6 +1182,7 @@ const race_info = {
     },
   },
   'zombie': {
+    camp: 2,
     name: '不死族: 冷血僵尸',
     hp: 20,
     atk: 2,
@@ -1215,6 +1225,7 @@ const race_info = {
     },
   },
   'corrupted': {
+    camp: 2,
     name: '人类: 极恶堕者',
     hp: 10,
     atk: 3,
@@ -1257,6 +1268,7 @@ const race_info = {
     },
   },
   'robot': {
+    camp: 2,
     name: '？？？',
     hp: 10,
     atk: 3,
@@ -1397,6 +1409,31 @@ window.addEventListener('error', function(e) {
   alert(msg);
 }, true);
 
+
+function* range(start, end, step = 1) {
+  if (step === 0) {
+    throw new RangeError('The step of the range cannot be 0')
+  }
+  if (end === undefined) {
+    end = start
+    start = 0
+  }
+  if (typeof start !== 'number' || typeof end !== 'number' || typeof step !== 'number') {
+    throw new RangeError('Only numbers are accepted as arguments')
+  }
+  if (step > 0) {
+    while (start < end) {
+      yield start
+      start += step
+    }
+  } else {
+    while (start > end) {
+      yield start
+      start += step
+    }
+  }
+}
+
 const isNumber = s => Object.prototype.toString.call(s) === "[object Number]";
 const isString = s => Object.prototype.toString.call(s) === "[object String]";
 const isArrayLike = s => s != null && typeof s[Symbol.iterator] === 'function';
@@ -1509,11 +1546,47 @@ function tag(tagName, options, func) {
   return newElement;
 }
 
+const getPassiveSkill = (race_key, skill_index, effect) => {
+  const r = race_info[race_key];
+  const skill = r.passive_skill[skill_index];
+  return tag('div', {
+    class: 'tooltip color_passive',
+    children: [
+      tag('span', {
+        innerText: skill.name,
+      }),
+      tag('div', {
+        class: 'tooltip-box',
+        innerHTML: `<div class="image_box"><img src="/static/images/race_${race_key}_passive_skill${skill_index+1}.jpg"></div><p>${skill.desc}</p><br><p class="color_task">${skill.task}</p>${effect ? `<br><div class="p">当前效果: ${effect}</div>` : ''}`
+      })
+    ]
+  });
+}
+
+const getItem = (item_key, amount = 1) => {
+  const item = items[item_key];
+  let icon = item.icon;
+  let background = item.background;
+  if (item_key == 'coin') {
+    if (amount >= 30) {
+      icon = 'coin3';
+    } else if (amount >= 20) {
+      icon = 'coin2';
+    }
+  }
+  let use = item.use.map(i => `<div>${i.name}: ${i.effect}</div><p class="color_task">${i.task}</p>`).join('<br>');
+  if (use) use += '<br>';
+  return tag('div', {
+    class: 'item tooltip',
+    innerHTML: `<div class="item_icon ${background ? `item_${background}` : ''}"><img src="/static/images/icon_${icon}.png"></div><span class="${item.color ? `color_${item.color}` : ''}"> ${item.name}x${amount}</span><div class="tooltip-box">${item.caption ? `<p class="color_npc">${item.caption}</p><br>` : ''}${item.desc.split('\n').map(i => `<p>${i}</p>`).join('')}${use}</div>`,
+  });
+}
+
 class Base64 {
   /**
    * 代码来自https://github.com/haochuan9421/base64-pro/
    */
-   _lookup;
+  _lookup;
   _revLookup;
   _encodeChunkSize = 16383;
   constructor() {

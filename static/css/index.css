@@ -96,19 +96,28 @@ img.icon {
   height: 25px;
   margin-left: 5px;
 }
+.item {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .item_icon {
-  width: 30px;
-  height: 30px;
   margin-left: 5px;
   border: 1px solid #fa20fa;
   display: flex;
   justify-content: center;
   align-items: center;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  transform: translateY(2px);
 }
 .item_icon img {
-  width: 25px;
-  height: 25px;
+  width: 17px;
+  height: 17px;
 }
+
+
 .item_common {
   background-color: #926443;
 }
@@ -149,9 +158,13 @@ img.icon {
   color: #fff;
 }
 
-p {
+p, .p {
   text-indent: 2em;
 }
+.p div {
+  text-indent: 0;
+}
+
 details summary {
   display: flex;
   align-items: center;
@@ -1157,6 +1170,7 @@ dialog {
   align-items: center;
   justify-content: center;
   color: #fff;
+  overflow: hidden;
 }
 dialog[open] {
   visibility: visible;
@@ -1184,7 +1198,6 @@ dialog > .content {
   min-height: 50%;
   max-height: calc(100% - 200px);
   border-radius: 3px;
-  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -1196,18 +1209,24 @@ dialog > .content .title {
 #inventory .items {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 #inventory .items .item {
   display: flex;
   align-items: center;
   width: calc(50% - 30px);
-  margin: 10px;
+  padding: 10px 0;
+  margin: 7px;
   border: 2px solid #fa20fa;
   border-radius: 3px;
 }
-
-#inventory .items .item_info {
-  margin-left: 10px;
+#inventory .items .item_icon {
+  width: 30px;
+  height: 30px;
+}
+#inventory .items .item_icon img {
+  width: 25px;
+  height: 25px;
 }
 
 #options .btn {

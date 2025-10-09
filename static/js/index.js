@@ -46,6 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     1: {
       html: `<div class="box">
   <p>某一天早上你从床上起来，准备去做日常工作。当你正从家里出来时，一辆大卡车突然出现在路上。瞬间，你的视野陷入一片黑暗……等你清醒过来时，你发现自己并不在医院里，而是在一个像是天堂般的地方，一位穿着花哨的女神正一边笑着一边俯视着你。被那东之国称为“异世界转生”的事件似乎发生在了你的身上。你决定抛弃你的过去，在这个新的幻想世界开始自己新的生活！</p>
+  <br>
+  <p class="action">(1) 继续</p>
+  <p class="action" data-action="to_section-7">(2) 跳过剧情</p>
 </div>`,
     },
     2: {
@@ -116,7 +119,25 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     },
     8: {
-      html: `<div class="box"><p>你重生在了一座森林的入口处。你的新身体感觉很好，但是还需要适应，你已经迫不及待地要开始你的旅途了，在森林中走了短短几分钟之后，又出现了一个女神，当她似乎与你刚刚在地狱遇到的女神有所不同。她介绍着自己是轮盘文神的第二个姐妹，拥有掌管凡人世界的权力。随后，她向你展示了这座森林的地图。</p></div>`,
+      html: `<div class="box"><p>你重生在了一座森林的入口处。你的新身体感觉很好，但是还需要适应，你已经迫不及待地要开始你的旅途了，在森林中走了短短几分钟之后，又出现了一个女神，当她似乎与你刚刚在地狱遇到的女神有所不同。她介绍着自己是轮盘文神的第二个姐妹，拥有掌管凡人世界的权力。随后，她向你展示了这座森林的地图。</p><p class="action">(1) 继续</p></div>`,
+      load: function () {
+        if (save.race_key == 'princess') {
+          $('section:last-child .box').prepend(tag('div', {
+            class: 'p',
+            innerHTML: `你的被动 ${getPassiveSkill('princess', 0).outerHTML} 触发了: 你获得了 ${getItem('coin', 50).outerHTML}、${getItem('chest_key').outerHTML}`,
+          }));
+          if (save.history[save.history.length-1].type != 'gain_item') {
+            gainItem('passive_skill', {
+              race_key: save.race_key,
+              skill_index: 0,
+            }, 'coin', 50);
+            gainItem('passive_skill', {
+              race_key: save.race_key,
+              skill_index: 0,
+            }, 'chest_key', 1);
+          }
+        }
+      }
     },
     9: {
       html: `<div class="box"><p>你站在淫暗森林的入口，斑驳的阳光透过层层叠叠的枝叶洒下，潮湿的泥土混着草木清香扑面而来，一条隐约的小径蜿蜒向密林深处。</p><br><p class="action">(1) 前进</p></div>`
@@ -264,19 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
       innerHTML: `<span>[${r.clothes.name}]</span><div class="tooltip-box"><div class="image_box" style="width: 150px; margin: 0 auto"><img src="/static/images/race_${save.race_key}_clothes.jpg"></div><p>${r.clothes.desc}</p><br><p class="color_task">${r.clothes.task}</p></div>`,
     }));
     // 被动技能
-    for (const i of r.passive_skill) {
-      $('.player_status .effects').appendChild(tag('div', {
-        class: 'tooltip effect color_passive',
-        children: [
-          tag('span', {
-            innerText: i.name,
-          }),
-          tag('div', {
-            class: 'tooltip-box',
-            innerHTML: `<p>${i.desc}</p><br><p class="color_task">${i.task}</p>`
-          })
-        ]
-      }));
+    for (const index of range(r.passive_skill.length)) {
+      $('.player_status .effects').appendChild(getPassiveSkill(save.race_key, index));
     }
   }
   /**
@@ -602,9 +612,34 @@ document.addEventListener('DOMContentLoaded', function() {
    * 显示物品栏
    */
   function showInventory() {
-    $('#inventory .items').innerHTML = '<div style="color: #a1a1a1; margin: 20px auto">你的背包空空如也...</div>'
+    if (!save.items || Object.keys(save.items).length == 0) {
+      $('#inventory .items').innerHTML = '<div style="color: #a1a1a1; margin: 20px auto">你的背包空空如也...</div>'
+    } else {
+      $('#inventory .items').innerHTML = '';
+      for (const [k, v] of Object.entries(save.items)) {
+        $('#inventory .items').appendChild(getItem(k, v))
+      }
+    }
     $('#inventory').showModal();
   }
+  /**
+   * 获得物品
+   */
+  function gainItem(source, data, item_key, amount = 1) {
+    if (!save.items) save.items = {};
+    save.items[item_key] = (save.items[item_key] || 0) + amount;
+    save.history.push({
+      type: 'gain_item',
+      from: source,
+      data: data,
+      item_key: item_key,
+      amount: amount,
+    });
+    setSave();
+  }
+  /**
+   * 显示选项
+   */
   function showOptions() {
     $('#options').showModal();
   }
@@ -862,6 +897,21 @@ document.addEventListener('DOMContentLoaded', function() {
             'random_race': '选择职业',
           }[i.action] || '';
           t.innerText = `投掷${dice_name}骰子得到点数 ${i.dice}`
+          break;
+        case 'select_race':
+          let r = race_info[i.race];
+          t.innerHTML = `选择职业 <span class="color_camp${r.camp}">${r.name}</span>`;
+          break;
+        case 'gain_item':
+          let item = items[i.item_key];
+          let color = item.color;
+          if (color) color = ` class="color_${color}"`
+          let source = '';
+          if (i.from == 'passive_skill') {
+            let skill = race_info[i.data.race_key].passive_skill[i.data.skill_index]
+            source = `被动技能 <span class="color_passive">${skill.name}</span>`;
+          }
+          t.innerHTML = `获得物品 <span${color}>${item.name}x${i.amount}</span>, 来源: ${source}`;
           break;
       }
       $('#recall .items').appendChild(t);
