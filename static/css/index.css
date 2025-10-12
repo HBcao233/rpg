@@ -79,6 +79,7 @@ a.link::before {
 }
 
 .image_box {
+  position: relative;
   width: 100%;
   height: fit-content;
   display: flex;
@@ -673,7 +674,58 @@ figure {
 .race img {
   max-width: 100%;
   height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: top;
 }
+
+.race_props {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #1e1e1e;
+  padding: 5px;
+}
+.race_props > .text {
+  font-size: 13px;
+  padding: 0 5px;
+}
+.race_prop div:first-child {
+  font-size: 13px;
+}
+.race_rate {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: currentColor;
+  -webkit-mask-image: url('/static/svg/star.svg');
+  mask-image: url('/static/svg/star.svg');
+  -webkit-mask-size: cover;
+}
+
+.race_index {
+  width: 50px;
+  height: 50px;
+  background: currentColor;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+.race_index .text {
+  color: #000;
+  font-size: 30px;
+}
+
+.race_prop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1;
+}
+
 .race_name {
   display: flex;
   align-items: center;
@@ -802,6 +854,7 @@ section.show {
   bottom: calc(100% + 10px);
   left: 50%;
   width: 200px;
+  max-height: 400px;
   transform: translateX(-50%);
   background: #1e1e1e;
   border: 2px solid #c1b91c;
@@ -818,6 +871,10 @@ section.show {
   pointer-events: none;
 }
 
+.tooltip-box > .content {
+  overflow: auto;
+  max-height: 400px;
+}
 .tooltip-box p {
   white-space: normal;
 }
@@ -829,7 +886,7 @@ section.show {
 .tooltip-box::after {
   content: '';
   position: absolute;
-  top: 100%;
+  top: max(100%, 400px);
   left: 50%;
   width: 6px;
   height: 6px;
@@ -1121,6 +1178,12 @@ section.show {
   border-radius: 5px;
   flex-shrink: 0;
 }
+.player_status .race_image_box img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  object-position: top;
+}
 .player_status .race_name {
   width: 70px; 
 }
@@ -1199,6 +1262,7 @@ dialog > .content {
   max-height: calc(100% - 200px);
   border-radius: 3px;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 dialog > .content .title {

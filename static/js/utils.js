@@ -799,6 +799,8 @@ const race_info = {
     name: '人类: 王室公主',
     hp: 14, 
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了人类王室的一员。可别高兴得太早，在这个世界中，贵族身份更像是一种诅咒。所有公主最后都有一个悲惨的命运!被绑架、被强奸、又或是堕落，这就是这个世界里太多数公主的结局。你能在这个世界身为公主存活下来吗？',
     clothes: {
       name: '皇家服饰',
@@ -842,6 +844,8 @@ const race_info = {
     name: '人类: 白浊法师',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了这个世界上最著名的人类魔法师之一。作为一名法师，你主要使用精液作为魔力的来源，还会使用古老的符文力量来强化自己的身体。由于恶魔领主的影响，所有的符文文字都变成了“荡妇”或者是“小穴”之类的文字。太下流了!',
     clothes: {
       name: '魔女长袍',
@@ -885,6 +889,8 @@ const race_info = {
     name: '精灵: 暗夜窃贼',
     hp: 10,
     atk: 2, 
+    hp_rate: 1,
+    atk_rate: 2,
     desc: '你发现自己被转生成了一位暗夜精灵。暗夜精灵是所有精灵中身手最敏捷的，也是受恶魔领主影响最大的种族。因为她们有着这个世界上最诱人的酮体以及对快感最低的耐受能力。这使便得几乎所有的种族对暗夜精灵都有着好感。',
     clothes: {
       name: '下流盗贼',
@@ -928,6 +934,8 @@ const race_info = {
     name: '矮人: 淬茎师',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了一名矮人铁匠，她们是这个世界身体最结实的种族，能够忍受更大的肉棒。矮人还因为她们的特有的料技，以及那些经常在战斗中被使用的性爱玩具而闻名于界。不过，因为她们的身体只有人类小孩的大小，所以敌人通常能在力量上碾压她们。',
     clothes: {
       name: '尺寸过大',
@@ -971,6 +979,8 @@ const race_info = {
     name: '兽人: 淫狐武士',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 1,
     desc: '你转生变成了兽人部落中的一个骄傲的武士。大多数兽人都长着各种各样的动物耳朵，还有着一个固定的发情期。兽人武士是所有武士中最出色的一支，因为当她们发情时，她们可以化这种求而不得为力量。以性欲为武器无疑是强大的，但是这也会让她们变得疯狂。',
     clothes: {
       name: '兽族样貌',
@@ -1014,6 +1024,8 @@ const race_info = {
     name: '牛头人: 圣乳骑士',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了一名<a class="link" href="https://zhmonstergirlencyclopedia.miraheze.org/wiki/荷斯陶洛斯">荷斯陶洛斯</a>，她们是弥诺陶洛斯的后代，一种人类和牛的混血产物。因为她们的精液和乳汁具有治疗效果所以被世界所熟知。由于她们身体强壮，能够承受更多惩罚，所以偏向防御的职业，例如圣骑士是与她们相性最好的职业之一。',
     clothes: {
       name: '奶牛装甲',
@@ -1057,6 +1069,8 @@ const race_info = {
     name: '人类: 触装魔女',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了一位人类女巫!不像追随光明的法师，女巫信奉深邃的黑暗力量来强化她们的法力。你获得了高于常人的魔力，但是也付出了代价。在你释放你的符咒时，缠绕在你身上的触手会因为感知到了魔力的突然増加而玩弄你身体的每个角落。',
     clothes: {
       name: '触手服',
@@ -1100,6 +1114,8 @@ const race_info = {
     name: '莉莉姆: 饮精魅魔',
     hp: 15,
     atk: 2,
+    hp_rate: 2,
+    atk_rate: 2,
     desc: '你转生成为了一个魅魔。魅魔的唯一食物就是纯净的魔力，也就是精液。这使得她们必须要尽可能多得狩猎男性敌人以获得充足的食物来源。可惜的是，你似乎只是一只莉莉姆，一种在魅魔的等级划分中处于最底层的魔物。让自己充分地做好准备吧!',
     clothes: {
       name: '迷你比基尼',
@@ -1143,6 +1159,8 @@ const race_info = {
     name: '人类: 禁欲教徒',
     hp: 20,
     atk: 2,
+    hp_rate: 3,
+    atk_rate: 2,
     desc: '你转生变成了一个普通的人类......哦等等，你身上似乎携带着束缚神教的标志。她们把自己捆绑起來，获得痛苦，以祈求束缚神的恩赐。她们越是让自己到痛苦、越是让自己受尽羞辱，束缚神给予她们的力量就越是强大。',
     clothes: {
       name: '捆绑套装',
@@ -1186,6 +1204,8 @@ const race_info = {
     name: '不死族: 冷血僵尸',
     hp: 20,
     atk: 2,
+    hp_rate: 3,
+    atk_rate: 2,
     desc: '你转生成为了一个自由的不死者。通常不死者都服待于召唤他们的死灵法师，但偶尔也有自然生成的依靠自己的意志行动的她们。不过，她们仍然行动迟缓且大多数时候只遵循自己的本能，寻找内棒以给她们带来温暖和生命。',
     clothes: {
       name: '破烂衣装',
@@ -1229,6 +1249,8 @@ const race_info = {
     name: '人类: 极恶堕者',
     hp: 10,
     atk: 3,
+    hp_rate: 1,
+    atk_rate: 3,
     desc: '转生成为了一个普通的人类冒险家......但是你身边环绕着的黑雾是什么？你能听到恶魔领主在不知道哪里的地方咯咯地笑着，你的皮肤颜色变深，头发褪色，所有的穴都开始发痒。你现在堕落者的一员了，她们是那些接受了慷概的恶魔领主的魔力人们。你的余生将永远淫靡。',
     clothes: {
       name: '碧池打扮',
@@ -1272,6 +1294,8 @@ const race_info = {
     name: '？？？',
     hp: 10,
     atk: 3,
+    hp_rate: 1,
+    atk_rate: 3,
     desc: '你不知道你自已被转生成了什么种族，有可能是服待于深邃者的自动机器人。你化身为黑暗的代理人，全身被无法拆除的黑色堕者制服包裹。冥冥黑暗之中，一个声音对你下达了命令。你除了听从命令，以及成为这套服装的宿主之外，什么也不能做。',
     clothes: {
       name: '乳胶衣',
@@ -1557,7 +1581,7 @@ const getPassiveSkill = (race_key, skill_index, effect) => {
       }),
       tag('div', {
         class: 'tooltip-box',
-        innerHTML: `<div class="image_box"><img src="/static/images/race_${race_key}_passive_skill${skill_index+1}.jpg"></div><p>${skill.desc}</p><br><p class="color_task">${skill.task}</p>${effect ? `<br><div class="p">当前效果: ${effect}</div>` : ''}`
+        innerHTML: `<div class="content"><div class="image_box"><img src="/static/images/race_${race_key}_passive_skill${skill_index+1}.jpg"></div><p>${skill.desc}</p><br><p class="color_task">${skill.task}</p>${effect ? `<br><div class="p">当前效果: ${effect}</div></div>` : ''}`
       })
     ]
   });
@@ -1578,7 +1602,7 @@ const getItem = (item_key, amount = 1) => {
   if (use) use += '<br>';
   return tag('div', {
     class: 'item tooltip',
-    innerHTML: `<div class="item_icon ${background ? `item_${background}` : ''}"><img src="/static/images/icon_${icon}.png"></div><span class="${item.color ? `color_${item.color}` : ''}"> ${item.name}x${amount}</span><div class="tooltip-box">${item.caption ? `<p class="color_npc">${item.caption}</p><br>` : ''}${item.desc.split('\n').map(i => `<p>${i}</p>`).join('')}${use}</div>`,
+    innerHTML: `<div class="item_icon ${background ? `item_${background}` : ''}"><img src="/static/images/icon_${icon}.png"></div><span class="${item.color ? `color_${item.color}` : ''}"> ${item.name}x${amount}</span><div class="tooltip-box">${item.caption ? `<p class="color_npc">"${item.caption}"</p><br>` : ''}${item.desc.split('\n').map(i => `<p>${i}</p>`).join('')}${use}</div>`,
   });
 }
 
@@ -1778,28 +1802,27 @@ const downloadFile = (url, filename) => {
  */
 function adjustTooltipPosition(tooltip) {
   const tooltipBox = tooltip.querySelector('.tooltip-box');
-  // 重置之前的调整类
-  tooltipBox.classList.remove('adjust-left', 'adjust-right', 'show-below');
   
   // 获取元素位置信息
-  const triggerRect = tooltip.getBoundingClientRect();
-  const tooltipRect = tooltipBox.getBoundingClientRect();
-  const viewportWidth = window.innerWidth;
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const tooltipBoxRect = tooltipBox.getBoundingClientRect();
   
   // 检查是否超出左边界
-  if (tooltipRect.left < 10) {
+  if (tooltipRect.left < window.innerWidth / 3) {
     tooltipBox.classList.add('adjust-left');
+  } else {
+    tooltipBox.classList.remove('adjust-left');
   }
-  
-  // 检查是否超出右边界
-  else if (tooltipRect.right > viewportWidth - 10) {
+  if (tooltipRect.right > window.innerWidth / 3 * 2) {
     tooltipBox.classList.add('adjust-right');
+  } else {
+    tooltipBox.classList.remove('adjust-right');
   }
   
-  // 检查是否超出顶部（考虑滚动）
-  if (triggerRect.top - scrollTop < tooltipRect.height + 20) {
+  if (tooltipRect.top < window.innerHeight / 2) {
     tooltipBox.classList.add('show-below');
+  } else {
+    tooltipBox.classList.remove('show-below');
   }
 }
 
@@ -1812,8 +1835,7 @@ function showTooltip(tooltip) {
     // 调整位置
     adjustTooltipPosition(tooltip, tooltipBox);
     tooltip.classList.add('show');
-    const t = tooltip.parentElement.querySelectorAll('.tooltip');
-    if (t) t.forEach(i => i.style.zIndex = 1);
+    tooltip.style.zIndex = 1;
   }
 }
 

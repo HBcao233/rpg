@@ -136,6 +136,17 @@ document.addEventListener('DOMContentLoaded', function() {
               skill_index: 0,
             }, 'chest_key', 1);
           }
+        } else if (save.race_key == 'wizard') {
+          $('section:last-child .box').prepend(tag('div', {
+            class: 'p',
+            innerHTML: `你的被动 ${getPassiveSkill('wizard', 0).outerHTML} 触发了: 你获得了 ${getItem('cum', 15).outerHTML}`,
+          }));
+          if (save.history[save.history.length-1].type != 'gain_item') {
+            gainItem('passive_skill', {
+              race_key: 'wizard',
+              skill_index: 0,
+            }, 'cum', 15);
+          }
         }
       }
     },
@@ -272,8 +283,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const r = race_info[save.race_key];
     $('.player_status').classList.add('show');
     $('.player_status .race_image').src = `/static/images/race_${save.race_key}.jpg`;
-    $('.player_status .race_name_box').classList.add('color_camp' + save.camp)
-    $('.player_status .race_name').innerText = r.name;
+    $('.player_status .race_name_box').classList.add('color_camp' + save.camp);
+    const rname = r.name.split(': ');
+    $('.player_status .race_name').innerText = rname[rname.length-1];
     $('.player_status .race_details').innerHTML = `<p>${r.desc}</p>`;
     $('.player_status .hp').innerText = `${save.player.hp} / ${r.hp}`;
     $('.player_status .atk').innerText = save.player.atk;
@@ -446,14 +458,9 @@ document.addEventListener('DOMContentLoaded', function() {
    * 显示种族
    */
   function showRace() {
-    $('section[data-section="7"]').appendChild(tag('div', {
-      class: 'box',
-      innerHTML: '<p class="action">(1) 继续</p>'
-    }));
     setTimeout(() => {
       updateSectionHeight()
     }, 100);
-    
     const rs = [
       ['princess', 'wizard', 'elf', 'dwarf', 'beastwoman', 'holstaurus'],
       ['witch', 'succubus', 'asceticist', 'zombie', 'corrupted', 'robot'],
@@ -472,7 +479,17 @@ document.addEventListener('DOMContentLoaded', function() {
     $('.race').classList.add('show');
     $('.race').classList.add(`camp${save.camp}`);
     $('.race').innerHTML = `<div class="race_header">
-  <div class="image_box"><img src="/static/images/race_${save.race_key}.jpg" /></div>
+  <div class="image_box">
+    <img src="/static/images/race_${save.race_key}.jpg" />
+    <div class="race_props">
+      <div class="race_index color_camp${save.camp}"><div class="text">${save.race}</div></div>
+      <div class="text">职业属性</div>
+      <div class="items">
+        <div class="race_prop"><div>HP<br>${`<div class="race_rate color_camp${save.camp}"></div>`.repeat(r.hp_rate)}</div><div>${r.hp}</div></div>
+        <div class="race_prop"><div>ATK<br>${`<div class="race_rate color_camp${save.camp}"></div>`.repeat(r.atk_rate)}</div><div>${r.atk}</div></div>
+      </div>
+    </div>
+  </div>
   <div class="race_name color_camp1">～${r.name}～</div>
   <p class="race_details">${r.desc}</p>
 </div>
@@ -548,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
   </div>
-</div>`;
+</div><p class="action">(1) 继续</p>`;
   }
   /**
    * 切换自选模式
