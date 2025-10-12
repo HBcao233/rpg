@@ -211,16 +211,22 @@ document.addEventListener('DOMContentLoaded', function() {
       type: 'battle',
       parent: 2,
       children: [4, 5],
+      x: 46.8,
+      y: 70.4,
     },
     4: {
       type: 'random_event',
       parent: 3,
       children: [6],
+      x: 40.7,
+      y: 70,
     },
     5: {
       type: 'battle',
       parent: 3,
       children: [7],
+      x: 53.6,
+      y: 70.45,
     },
   };
   
@@ -271,13 +277,13 @@ document.addEventListener('DOMContentLoaded', function() {
         height: v.height,
         label: v.label,
       });
-    }
-    const player_marker = map.addMarker({
-      x: 47.00,
-      y: 75.00,
+    };
+    map.player_marker = map.addMarker({
+      x: 47,
+      y: 88,
       id: 'player',
       type: 'pin',
-    })
+    });
   }
   function updateStatus() {
     const r = race_info[save.race_key];
@@ -655,6 +661,31 @@ document.addEventListener('DOMContentLoaded', function() {
     setSave();
   }
   /**
+   * 花费物品
+   */
+  function costItem(source, data, item_key, amount=1) {
+    if (!save.items) {
+      save.items = {};
+      return false;
+    }
+    if (!save.items[item_key]) {
+      save.items[item_key] = 0;
+      return false;
+    }
+    if (save.items[item_key] < amount) {
+      return false;
+    } 
+    save.items[item_key] -= amount;
+    save.history.push({
+      type: 'cost_item',
+      from: source,
+      data: data,
+      item_key: item_key,
+      amount: amount,
+    });
+    setSave();
+  }
+  /**
    * 显示选项
    */
   function showOptions() {
@@ -912,8 +943,10 @@ document.addEventListener('DOMContentLoaded', function() {
           let dice_name = {
             'random_camp': '选择阵营',
             'random_race': '选择职业',
+            'random_enemy': '决定敌人',
+            'attack_enemy': '决定攻击方式',
           }[i.action] || '';
-          t.innerText = `投掷${dice_name}骰子得到点数 ${i.dice}`
+          t.innerHTML = `投掷<span class="color_random">${dice_name}骰子</span>得到<span class="color_random">点数 ${i.dice}</span>`
           break;
         case 'select_race':
           let r = race_info[i.race];
@@ -953,6 +986,9 @@ document.addEventListener('DOMContentLoaded', function() {
       innerHTML: '你的回合，请投掷骰子:',
     }));
     $('section:last-child .box').appendChild(parseHTML(`<div class="dice d6" data-sides="6" data-action="attack_enemy" style="margin-left: 2em"></div>`)[0]);
+    setTimeout(() => {
+      updateSectionHeight();
+    }, 100);
   }
   function attackEnemy(dice) {
     const attack_types = [
@@ -964,7 +1000,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const attack_info = attack_types[attack_type];
     const r = race_info[save.race_key];
     const attack_details = r.active_skill[attack_type];
-    const arr = parseHTML(`<br><div class="text-center color_${attack_info.color}">[${attack_info.name}] ${attack_details.name}</div><p class="color_task">${attack_details.task}</p>`)
+    let release_success = true;
+    let release_info = '';
+    if (attack_details.cost) {
+      let [need_item_key, need_item_amount] = attack_details.cost;
+      if (save.history[save.history.length - 1].from != 'attack_enemy') {
+        release_success = costItem('attack_enemy', {
+          race_key: save.race_key,
+          attack_type: attack_type,
+        }, ...attack_details.cost);
+      }
+      if (!release_success) { 
+        release_info = `<div class="p">攻击发动失败: ${getItem(...attack_details.cost).outerHTML} 不足，你只有 ${save.items[need_item_key]}</div>`
+      } else release_info = `<div class="p">你使用了 ${getItem(...attack_details.cost).outerHTML}</div>`
+    }
+    
+    const arr = parseHTML(`<br><div class="text-center color_${attack_info.color}">[${attack_info.name}] ${attack_details.name}</div><p class="color_task">${attack_details.task}</p>${release_info}`)
     for (const i of arr) $('section:last-child .box').appendChild(i);
     
     
@@ -1051,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Timer();
     new Metronome();
     
-    const arr1 = parseHTML(`<br><p class="action" data-action="attack_success">(1) 任务完成</p><p class="action" data-action="attack_fail">(2) 任务失败 / 不小心去了</p>`)
+    const arr1 = parseHTML(`<br><div class="p action ${release_success?'':'disabled'}" data-action="${release_success?'attack_success':'attack_fail'}">(1) 任务完成</div><p class="action" data-action="attack_fail">(2) 任务失败 / 不小心去了</p>`)
     for (const i of arr1) $('section:last-child .box').appendChild(i);
     setTimeout(updateSectionHeight, 100);
   }

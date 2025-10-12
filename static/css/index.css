@@ -531,9 +531,13 @@ figure {
 .action {
   color: #6086cd;
 }
+.action.disabled {
+  opacity: .3;
+}
 .action:active {
   opacity: .6;
 }
+
 
 .dice {
   display: inline-block;
@@ -854,6 +858,7 @@ section.show {
   bottom: calc(100% + 10px);
   left: 50%;
   width: 200px;
+  height: fit-content;
   max-height: 400px;
   transform: translateX(-50%);
   background: #1e1e1e;
