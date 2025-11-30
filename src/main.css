@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'Microsoft YaHei';
+  src: url('/assets/fonts/MicrosoftYaHei.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'chinese punctuation';
+  src: url('/assets/fonts/MicrosoftYaHei.ttf') format('truetype');
+  unicode-range: 
+    U+FF0C, /* 中文逗号 */
+    U+FF1A; /* 中文冒号 */
+}
+
+@font-face {
+  font-family: 'しねきゃぷしょん';
+  src: url('/assets/fonts/cinecaption.ttf') format('truetype');
+}
+
+html, body {
+  --el-text-color-regular: #fff;
+  --el-text-color-primary: #fff;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #000000;
+  font-size: 16px;
+  color: #fff;
+  font-family: 
+    'chinese punctuation', 
+    'しねきゃぷしょん', 
+    'Microsoft YaHei', 
+    'Arial', sans-serif;
+}

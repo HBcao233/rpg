@@ -1,0 +1,51 @@
+export const chapter1 = {
+  chest_items: ['herb', 'rope', 'slave_key', 'lucky_amulet', 'coin@50', 'godness_dice'],
+  enemys: ['thieves_brothers', 'werewolf', 'bee', 'normal_orcish', 'sorceress', 'aphrodisiac_plant'],
+  map_blocks: {
+    0: {
+      type: 'start',
+      parent: null,
+      children: [0],
+      x: 45.30,
+      y: 90.50,
+      width: 'auto',
+      height: 'auto', 
+      label: '#0 淫乱森林的入口',
+    },
+    1: {
+      type: 'battle',
+      parent: 0,
+      children: [2],
+      x: 46.85,
+      y: 84.70,
+    },
+    2: {
+      type: 'random_event',
+      parent: 1,
+      children: [3],
+      x: 46.7,
+      y: 77.5,
+    },
+    3: {
+      type: 'battle',
+      parent: 2,
+      children: [4, 5],
+      x: 46.8,
+      y: 70.4,
+    },
+    4: {
+      type: 'random_event',
+      parent: 3,
+      children: [6],
+      x: 40.7,
+      y: 70,
+    },
+    5: {
+      type: 'battle',
+      parent: 3,
+      children: [7],
+      x: 53.6,
+      y: 70.45,
+    },
+  },
+}
