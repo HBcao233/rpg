@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default {
@@ -9,6 +10,7 @@ export default {
     file: 'rpg.js',
     format: 'esm',
   },
+  external: (id) => id.startsWith('/assets/'),
   plugins: [
     {
       name: 'resolve-absolute-paths',

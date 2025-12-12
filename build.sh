@@ -2,10 +2,13 @@ output_dir=public
 mkdir -p $output_dir
 
 npx rollup -c
+python minify_lit.py
+echo "minify lit rpg.js"
+
 hash=$(md5sum rpg.js)
 hash=${hash:0:10}
 name=rpg.${hash}.js
-npx terser rpg.js -o $output_dir/$name -c -m
+npx terser rpg.js -o $output_dir/$name -c -m -b
 echo "output $output_dir/$name"
 
 cp -r assets $output_dir/

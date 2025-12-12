@@ -1,6 +1,7 @@
 import { RPGElement, html, css, nothing, safeHTML } from '/src/element.js';
 import { races } from '/src/contants/index.js';
-import { range, getPassiveSkill } from '/src/utils/index.js';
+import { range } from '/src/utils/index.js';
+import { getPassiveSkill } from '/src/utils/rpg.js';
 
 
 class Status extends RPGElement {
