@@ -26,7 +26,7 @@ cat << EOF > $output_dir/index.html
   <meta name="image" itemprop="image" property="og:image" content="https://i.postimg.cc/9fk3npbC/1.jpg">
   <title>伪娘转生到淫乱世界跑团RPG!</title>
 
-  <link rel="stylesheet" href="/src/main.css">
+  <link rel="stylesheet" href="/main.css">
   <script async type="module" src="/$name"></script>
 </head>
 <body>
