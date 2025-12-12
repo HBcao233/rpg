@@ -5,7 +5,7 @@ export const isMobile = () => {
 
 export const copyToClipboard = (text) => {
   let nav = navigator || window.navigator;
-  if (MoeApp.initData == '' && nav && nav.clipboard && nav.clipboard.writeText) {
+  if (nav && nav.clipboard && nav.clipboard.writeText) {
     nav.clipboard.writeText(text);
     return
   }
