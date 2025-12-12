@@ -1,10 +1,17 @@
+output_dir=public
+mkdir -p $output_dir
+
 npx rollup -c
 hash=$(md5sum rpg.js)
 hash=${hash:0:10}
 name=rpg.${hash}.js
-npx terser rpg.js -o $name -c -m
-echo "output $name"
-cat << EOF > index.html
+npx terser rpg.js -o $output_dir/$name -c -m
+echo "output $output_dir/$name"
+
+cp -r assets $output_dir/
+cp src/main.css $output_dir/
+
+cat << EOF > $output_dir/index.html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
