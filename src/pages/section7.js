@@ -1,6 +1,6 @@
 import { RPGElement, html, css, nothing, safeHTML } from '/src/element.js';
 import { range } from '/src/utils/index.js';
-import { races, race_key_map } from '/src/contants/index.js';
+import { races, race_key_map } from '/src/constants/index.js';
 
 
 export class Section7 extends RPGElement {

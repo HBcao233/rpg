@@ -1,6 +1,6 @@
 import { html, safeHTML, until } from '/src/element.js';
 import { getSectionSummary, sectionSummary2html } from './section-summary.js';
-import { races, race_key_map } from '/src/contants/index.js';
+import { races, race_key_map } from '/src/constants/index.js';
 
 
 export class History {

@@ -1,5 +1,5 @@
 import { html, safeHTML, nothing } from '/src/element.js';
-import { races } from '/src/contants/index.js';
+import { races } from '/src/constants/index.js';
 
 
 export const getPassiveSkill = (race_key, skill_index, effect) => {

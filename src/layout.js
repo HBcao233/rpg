@@ -1,7 +1,7 @@
 import { RPGElement, html, css, nothing, staticHtml, unsafeStatic } from '/src/element.js';
 import { getValue, setValue, getTime } from './utils/index.js';
 import { History } from './utils/history.js';
-import { races } from '/src/contants/index.js';
+import { races } from '/src/constants/index.js';
 
 
 const dialogs = ['saves', 'settings', 'inventory', 'options', 'recall'];

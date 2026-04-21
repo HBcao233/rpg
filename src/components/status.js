@@ -1,5 +1,5 @@
 import { RPGElement, html, css, nothing, safeHTML } from '/src/element.js';
-import { races } from '/src/contants/index.js';
+import { races } from '/src/constants/index.js';
 import { range } from '/src/utils/index.js';
 import { getPassiveSkill } from '/src/utils/rpg.js';
 
