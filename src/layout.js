@@ -1,8 +1,7 @@
 import { RPGElement, html, css, nothing, staticHtml, unsafeStatic } from '/src/element.js';
-import { getValue, setValue, getTime } from './utils/index.js';
-import { History } from './utils/history.js';
-import { races } from '/src/constants/index.js';
-
+import { getValue, setValue } from './utils/index.js';
+import { gameStore } from '/src/core/game-store.js';
+import { History } from '/src/core/history.js';
 
 const dialogs = ['saves', 'settings', 'inventory', 'options', 'recall'];
 
@@ -23,9 +22,9 @@ el-footer {
   padding: 0;
 }
   `;
-  
+
   static properties = {
-    save: {
+    store: {
       type: Object,
       state: true,
     },
@@ -46,12 +45,12 @@ el-footer {
       state: true,
     }])),
   }
-  
+
   render() {
     return html`
 <el-container @action="${this.onAction}">
   <el-main @click="${this.containerClick}">
-    <rpg-content .save="${this.save}">
+    <rpg-content>
       ${this.map_showed ? html`<rpg-map></rpg-map>`: nothing}
     </rpg-content>
   </el-main>
@@ -62,108 +61,63 @@ el-footer {
 </el-container>
     `;
   }
-  
+
   setup() {
+    gameStore.addHost(this);
+
     getValue('save').then((v) => {
-      this.save = v ?? {};
-      this.requestUpdate();
+      gameStore.set(v ?? {});
     });
     getValue('config').then((v) => {
       this.config = v ?? {};
     });
   }
-  
+
   firstUpdated() {
     this.rpg_content = this.renderRoot.querySelector('rpg-content');
   }
-  
+
   requestUpdate() {
     super.requestUpdate();
     this.rpg_content && this.rpg_content.requestUpdate();
   }
-  
-  setSave() {
-    this.save.update_time = getTime();
-    setValue('save', this.save);
-  }
-  
-  updateSave(key, value) {
-    this.save[key] = value;
-    if (key === 'race_key') {
-      const r = races[value];
-      this.save.player = {
-        hp: r.hp,
-        max_hp: r.hp,
-        atk: r.atk,
-      }
-      this.pushHistory(History.select_race(this.save.camp, this.save.race));
-    }
-    this.setSave();
-  }
-  
-  equalHistory(target, check) {
-    if (!check) return false;
-    return target.id === check.id;
-  }
-  
-  findHistory(target) {
-    for (let i = this.save.history.length - 1; i >= 0; i--) {
-      const h = this.save.history[i];
-      if (this.equalHistory(target, h)) return h;
-    }
-    return null;
-  }
-  
-  pushHistory(history) {
-    if (!this.save.history) this.save.history = [];
-    const h = this.findHistory(history);
-    if (!h) {
-      this.save.history.push(history);
-    } else {
-      if (history.type == 'select_race') {
-        h.camp = history.camp;
-        h.race = history.race;
-      }
-    }
-  }
-  
+
   toSection(id) {
     const success = this.rpg_content.toSection(id);
     if (success) {
       if (parseInt(id)) {
-        this.save.section = String(id);
-        this.pushHistory(History.to_section(id));
+        gameStore.section = String(id);
+        gameStore.pushHistory(History.to_section(id));
       }
       this.onLoad(id);
-      this.setSave();
     }
   }
-  
+
   nextSection() {
-    if (!this.save.section) return this.toSection(1);
-    const numid = parseInt(this.save.section);
+    if (!gameStore.section) return this.toSection(1);
+    const numid = parseInt(gameStore.section);
     if (!isNaN(numid)) this.toSection(numid + 1);
     else this.toSection('page500');
   }
-  
+
   onLoad(id) {
     if (id === 'title-screen') {
       this.options_dialog.hide();
       this.status_showed = false;
       this.map_showed = false;
       return;
-    } 
+    }
     const numid = parseInt(id);
     if (numid >= 8) {
       this.showMap();
       this.showStatus();
     }
     if (numid === 8) {
-      this.save.player.block = 0;
-      this.save.player.round = 0;
+      gameStore.updatePlayer('block', 0);
+      gameStore.updatePlayer('round', 0);
     }
   }
-  
+
   onAction(e) {
     if (!e.detail.action) return;
     switch (e.detail.action) {
@@ -182,7 +136,7 @@ el-footer {
       case 'back':
         this.toSection(this.save.section)
         break;
-        
+
       case 'show_saves':
         this.showSaves();
         break;
@@ -196,19 +150,19 @@ el-footer {
         this.save = {}
         this.setSave();
         break;
-        
+
       case 'show_settings':
         this.showSettings();
         break;
-      
-      case 'update_config': 
+
+      case 'update_config':
         this.config[e.detail.key] = e.detail.value;
         setValue('config', this.config);
         break;
       case 'update_save':
         this.updateSave(e.detail.key, e.detail.value);
         break;
-        
+
       case 'show_options':
         this.showOptions();
         break;
@@ -220,24 +174,24 @@ el-footer {
         break;
     }
   }
-  
+
   startGame() {
-    if (this.save.section) {
+    if (gameStore.section) {
       if(!confirm('该操作将会覆盖自动存档，确定继续吗')) {
         return;
       }
     }
-    this.save = {};
+    gameStore.reset();
     this.toSection(0);
   }
-  
+
   continueGame() {
-    if (!this.save?.section) {
+    if (!gameStore.section) {
       return
     }
-    this.toSection(this.save.section);
+    this.toSection(gameStore.section);
   }
-  
+
   containerClick(e) {
     if (this.rpg_content.renderRoot.querySelectorAll('section').length > 1) return;
     const isSimple = this.rpg_content.renderRoot.querySelector('[simple]');
@@ -245,7 +199,7 @@ el-footer {
       this.nextSection();
     }
   }
-  
+
   showDialog(name) {
     return new Promise((resolve, reject) => {
       this[name + '_showed'] = true;
@@ -255,48 +209,48 @@ el-footer {
       });
     });
   }
-  
+
   showSaves() {
     this.showDialog('saves').then((dialog) => {
       dialog.save = this.save;
       dialog.show();
     });
   }
-  
+
   showSettings() {
     this.showDialog('settings').then((dialog) => {
       dialog.config = this.config;
       dialog.show();
     });
   }
-  
+
   showMap() {
     this.showDialog('map').then((map) => {
       map.save = this.save;
       this.map = map;
     });
   }
-  
+
   showStatus() {
     this.showDialog('status').then((status) => {
       status.save = this.save;
       this.status = status;
     });
   }
-  
+
   showOptions() {
     this.showDialog('options').then((dialog) => {
       this.options_dialog = dialog;
       dialog.show();
     });
   }
-  
+
   showInventory() {
     this.showDialog('inventory').then((dialog) => {
       dialog.show();
     });
   }
-  
+
   showRecall() {
     this.showDialog('recall').then((dialog) => {
       dialog.save = this.save;

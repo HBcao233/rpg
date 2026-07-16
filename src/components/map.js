@@ -182,7 +182,7 @@ class RpgMap extends RPGElement {
   bottom: 5px;
 }
   `];
-  
+
   static properties = {
     /* 当前缩放比例 */
     scale: {
@@ -218,9 +218,9 @@ class RpgMap extends RPGElement {
       default: [],
     },
   }
-  
+
   static #marker_index = 0;
-  
+
   setup() {
     getValue('map').then((v) => {
       v = v ?? {};
@@ -228,14 +228,14 @@ class RpgMap extends RPGElement {
       if (v.posX) this.posX = v.posX;
       if (v.posY) this.posY = v.posY;
     });
-    
+
     /** @type {number} 最小缩放比例 */
     this.minScale = 1;
     /** @type {number} 最大缩放比例 */
     this.maxScale = 3;
     /** @type {number} 缩放速度 */
     this.zoomSpeed = 0.1;
-    
+
     /** @type {number} 拖动起始X坐标 */
     this.startX = 0;
     /** @type {number} 拖动起始Y坐标 */
@@ -244,15 +244,15 @@ class RpgMap extends RPGElement {
     this.startPosX = 0;
     /** @type {number} 拖动起始时的Y位置 */
     this.startPosY = 0;
-    
+
     /** @type {number} 双指触摸的初始距离 */
     this.initialPinchDistance = 0;
     /** @type {number} 双指触摸的初始缩放比例 */
     this.initialScale = 1;
-    
+
     /** @type {number|null} 缩放信息隐藏定时器 */
     this.zoomInfoTimer = null;
-    
+
     /** @type {number|null} 双击检测定时器 */
     this.tapTimeout = null;
     /** @type {number} 上次点击时间 */
@@ -260,10 +260,10 @@ class RpgMap extends RPGElement {
     /** @type {number} 双击时间阈值（毫秒） */
     this.doubleTapDelay = 300;
   }
-  
+
   render() {
     return html`<rpg-box type="13" class="map-box">
-  <div class="map" 
+  <div class="map"
     @mousedown="${this.handleMouseDown}" 
     @wheel="${this.handleWheel}"
     @dblclick=${this.handleDoubleClick}
@@ -282,18 +282,18 @@ class RpgMap extends RPGElement {
   <img class="zoomOut" src="/assets/svg/zoomOut.svg" @click="${this.zoomOut}">
 </rpg-box>`;
   }
-  
+
   onMounted() {
     // 事件绑定
     document.addEventListener('mousemove', this);
     document.addEventListener('mouseup', this);
   }
-  
+
   onBeforeUnmounted() {
     document.removeEventListener('mousemove', this);
     document.removeEventListener('mouseup', this);
   }
-  
+
   firstUpdated() {
     this.box = this.renderRoot.firstElementChild;
     /** @type {HTMLElement} 地图容器元素 */
@@ -304,7 +304,7 @@ class RpgMap extends RPGElement {
     /** @type {HTMLElement} 缩放信息显示元素 */
     this.zoomInfo = this.content.nextElementSibling;
   }
-  
+
   handleEvent(e) {
     const handles = {
       'mousemove': this.handleMouseMove,
@@ -312,7 +312,7 @@ class RpgMap extends RPGElement {
     }
     handles[e.type].call(this, e);
   }
-  
+
   /**
    * 处理鼠标按下事件
    * @param {MouseEvent} e - 鼠标事件对象
@@ -324,23 +324,23 @@ class RpgMap extends RPGElement {
     this.startPosX = this.posX;
     this.startPosY = this.posY;
   }
-  
+
   /**
    * 处理鼠标移动事件
    * @param {MouseEvent} e - 鼠标事件对象
    */
   handleMouseMove(e) {
     if (!this.dragging) return;
-    
+
     const deltaX = e.clientX - this.startX;
     const deltaY = e.clientY - this.startY;
-    
+
     this.posX = this.startPosX + deltaX;
     this.posY = this.startPosY + deltaY;
-    
+
     this.updateTransform();
   }
-  
+
   /**
    * 处理鼠标释放事件
    * @param {MouseEvent} e - 鼠标事件对象
@@ -349,19 +349,19 @@ class RpgMap extends RPGElement {
     this.dragging = false;
     this.saveTransform();
   }
-  
+
   /**
    * 处理双击事件
    * @param {MouseEvent} e - 鼠标事件对象
    */
   handleDoubleClick(e) {
     e.preventDefault();
-    
+
     // 获取点击位置相对于容器中心的坐标
     const rect = this.container.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    
+
     this.toggleZoom(x, y);
   }
 
@@ -371,22 +371,22 @@ class RpgMap extends RPGElement {
    */
   handleWheel(e) {
     e.preventDefault();
-    
+
     const delta = e.deltaY > 0 ? -this.zoomSpeed : this.zoomSpeed;
     const oldScale = this.scale;
     const newScale = Math.max(this.minScale, Math.min(this.maxScale, this.scale + delta));
-    
+
     if (newScale !== this.scale) {
       // 计算鼠标位置相对于容器的坐标
       const rect = this.container.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      
+
       // 调整位置以保持鼠标下的点不动
       const scaleRatio = newScale / oldScale;
       this.posX = x - (x - this.posX) * scaleRatio;
       this.posY = y - (y - this.posY) * scaleRatio;
-      
+
       this.scale = newScale;
       this.updateTransform();
     }
@@ -398,7 +398,7 @@ class RpgMap extends RPGElement {
    */
   handleTouchStart(e) {
     // try{e.preventDefault();}catch(err){};
-    
+
     if (e.touches.length === 1) {
       // 单指触摸 - 拖动
       this.dragging = true;
@@ -420,21 +420,21 @@ class RpgMap extends RPGElement {
    */
   handleTouchMove(e) {
     e.preventDefault();
-    
+
     if (e.touches.length === 1 && this.dragging) {
       // 单指移动
       const deltaX = e.touches[0].clientX - this.startX;
       const deltaY = e.touches[0].clientY - this.startY;
-      
+
       this.posX = this.startPosX + deltaX;
       this.posY = this.startPosY + deltaY;
-      
+
       this.updateTransform();
     } else if (e.touches.length === 2) {
       // 双指缩放
       const currentDistance = this.getPinchDistance(e.touches);
       const scale = currentDistance / this.initialPinchDistance;
-      
+
       this.scale = Math.max(this.minScale, Math.min(this.maxScale, this.initialScale * scale));
       this.updateTransform();
     }
@@ -450,19 +450,19 @@ class RpgMap extends RPGElement {
       // 检测双击
       const currentTime = Date.now();
       const tapLength = currentTime - this.lastTapTime;
-      
+
       if (tapLength >= this.doubleTapDelay || tapLength <= 0) {
         this.lastTapTime = currentTime;
       } else {
         // 双击检测成功
         e.preventDefault();
-        
+
         // 获取最后一个触摸点的位置
         const touch = e.changedTouches[0];
         const rect = this.container.getBoundingClientRect();
         const x = touch.clientX - rect.left - rect.width / 2;
         const y = touch.clientY - rect.top - rect.height / 2;
-        
+
         this.toggleZoom(x, y);
         this.lastTapTime = 0; // 重置时间
       }
@@ -487,7 +487,7 @@ class RpgMap extends RPGElement {
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
   }
-  
+
   /**
    * 切换缩放状态
    * @param {number} centerX - 缩放中心X坐标
@@ -496,7 +496,7 @@ class RpgMap extends RPGElement {
   toggleZoom(centerX = 0, centerY = 0) {
     const targetScale = this.scale === 1 ? 2 : 1;
     const scaleRatio = targetScale / this.scale;
-    
+
     // 调整位置以保持点击位置不动
     if (targetScale === 2) {
       this.posX = centerX - (centerX - this.posX) * scaleRatio;
@@ -506,7 +506,7 @@ class RpgMap extends RPGElement {
       this.posX = 0;
       this.posY = 0;
     }
-    
+
     this.scale = targetScale;
     this.animateTransform();
     this.saveTransform();
@@ -520,15 +520,15 @@ class RpgMap extends RPGElement {
     const containerRect = this.container.getBoundingClientRect();
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
-    
+
     // 计算缩放后的图片尺寸
     const scaledWidth = containerWidth * this.scale;
     const scaledHeight = containerHeight * this.scale;
-    
+
     // 计算最大可移动距离
     const maxX = Math.max(0, (scaledWidth - containerWidth) / 2);
     const maxY = Math.max(0, (scaledHeight - containerHeight) / 2);
-    
+
     // 限制位置在边界内
     this.posX = Math.max(-maxX, Math.min(maxX, this.posX));
     this.posY = Math.max(-maxY, Math.min(maxY, this.posY));
@@ -542,6 +542,7 @@ class RpgMap extends RPGElement {
     this.limitPosition();
     this.showZoomInfo();
   }
+
   /**
    * 保存的变换属性
    */
@@ -552,7 +553,7 @@ class RpgMap extends RPGElement {
       posY: this.posY,
     });
   }
-  
+
   /**
    * 带动画的变换更新
    * @description 平滑过渡缩放和位置变化
@@ -560,13 +561,13 @@ class RpgMap extends RPGElement {
   animateTransform() {
     this.animate = true;
     this.updateTransform();
-    
+
     // 动画结束后移除过渡效果
     setTimeout(() => {
       this.animate = false;
     }, 300);
   }
-  
+
   /**
    * 显示缩放信息并在3秒后自动隐藏
    * @description 显示当前缩放百分比，3秒后淡出
@@ -576,10 +577,10 @@ class RpgMap extends RPGElement {
     if (this.zoomInfoTimer) {
       clearTimeout(this.zoomInfoTimer);
     }
-    
+
     // 显示缩放信息
     this.zoomInfo.classList.add('show');
-    
+
     // 3秒后隐藏
     this.zoomInfoTimer = setTimeout(() => {
       this.zoomInfo.classList.remove('show');
@@ -618,7 +619,7 @@ class RpgMap extends RPGElement {
     this.updateTransform();
     this.saveTransform();
   }
-  
+
   /**
    * 添加地图标记
    * @param {Object} options - 标记选项
@@ -631,15 +632,15 @@ class RpgMap extends RPGElement {
    * @returns {HTMLElement} 标记元素
    */
   addMarker(options) {
-    let { 
+    let {
       x, y, key,
-      label = '', 
-      type = 'pin', 
+      label = '',
+      type = 'pin',
       onclick,
-      width, 
+      width,
       height,
     } = options;
-  
+
     // 创建标记元素
     const blocks = {
       'battle': '战斗格',
@@ -649,7 +650,7 @@ class RpgMap extends RPGElement {
       label = blocks[type];
       label = `#${key} ` + label;
     }
-    
+
     const id = ++RpgMap.#marker_index;
     marker.id = 'marker-' + id;
     marker.left = `${x}%`;
@@ -673,7 +674,7 @@ class RpgMap extends RPGElement {
       if (height != 'auto') height += '%';
       marker.height = height;
     }
-    
+
     // 根据类型创建标记内容
     switch (type) {
       case 'pin':
@@ -693,7 +694,7 @@ class RpgMap extends RPGElement {
         marker.inner = safeHTML(options.html || '');
         break;
     }
-    
+
     this.markers.push(marker);
   }
 }

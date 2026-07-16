@@ -1,5 +1,5 @@
 import { html, safeHTML, until } from '/src/element.js';
-import { getSectionSummary, sectionSummary2html } from './section-summary.js';
+import { getSectionSummary, sectionSummary2html } from '/src/utils/section-summary.js';
 import { races, race_key_map } from '/src/constants/index.js';
 
 
@@ -7,7 +7,7 @@ export class History {
   static TO_SECTION = 'to_section';
   static SELECT_RACE = 'select_race';
   static DICE = 'dice';
-  
+
   static to_section(section) {
     return {
       type: this.TO_SECTION,
@@ -15,7 +15,7 @@ export class History {
       id: `${this.TO_SECTION}-${section}`,
     }
   }
-  
+
   static select_race(camp, race) {
     return {
       type: this.SELECT_RACE,
@@ -24,7 +24,7 @@ export class History {
       id: this.SELECT_RACE,
     }
   }
-  
+
   static dice(action, num) {
     return {
       type: this.DICE,
@@ -33,11 +33,11 @@ export class History {
       id: `${this.DICE}-${action}`,
     }
   }
-  
+
   static passive_skill(race_key, skill_index) {
-    
+
   }
-  
+
   static stringify(history) {
     switch (history.type) {
       case this.TO_SECTION:

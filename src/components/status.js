@@ -1,4 +1,5 @@
 import { RPGElement, html, css, nothing, safeHTML } from '/src/element.js';
+import { gameStore } from '/src/core/game-store.js';
 import { races } from '/src/constants/index.js';
 import { range } from '/src/utils/index.js';
 import { getPassiveSkill } from '/src/utils/rpg.js';
@@ -36,7 +37,7 @@ class Status extends RPGElement {
   object-position: top;
 }
 .race_name {
-  width: 70px; 
+  width: 70px;
 }
 
 .effects {
@@ -73,7 +74,7 @@ el-button::part(el-button) {
   padding: 3px 10px;
   border: 2px solid #afae00;
   background: #1e1e1e;
-  color: #e7f063; 
+  color: #e7f063;
   border-radius: 3px;
   margin: 5px;
 }
@@ -89,18 +90,18 @@ el-button[disabled]::part(el-button) {
   opacity: .5;
 }
   `];
-  
+
   static properties = {
     save: {
       type: Object,
       state: true,
     },
   }
-  
+
   render() {
-    const camp = this.save?.camp;
-    const race = this.save?.race;
-    const race_key = this.save?.race_key;
+    const camp = gameStore.camp;
+    const race = gameStore.race;
+    const race_key = gameStore.race_key;
     const r = races[race_key];
     return html`
 <div class="race_image_box image_box">
@@ -111,8 +112,8 @@ el-button[disabled]::part(el-button) {
     <span class="race_name color_camp${camp}">${r.name}</span>
     <div slot="content">${safeHTML(r.desc)}</div>
   </el-tooltip>`}
-  <div>HP <span class="hp">${this.save?.player.hp ?? 0} / ${this.save?.player.max_hp ?? 0}</span></div>
-  <div>ATK <span class="atk">${this.save?.player.atk ?? 0}</span></div>
+  <div>HP <span class="hp">${gameStore.player.hp ?? 0} / ${gameStore.player.max_hp ?? 0}</span></div>
+  <div>ATK <span class="atk">${gameStore.player.atk ?? 0}</span></div>
   <div>MP <span class="mp">0 / 0</span></div>
 </div>
 <div class="effects">${range(2).map((i) => getPassiveSkill(race_key, i))}</div>

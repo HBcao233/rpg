@@ -1,4 +1,5 @@
 import { RPGElement, html, css, nothing, safeHTML } from '/src/element.js';
+import { gameStore } from '/src/core/game-store.js';
 import { range } from '/src/utils/index.js';
 import { races, race_key_map } from '/src/constants/index.js';
 
@@ -200,7 +201,7 @@ export class Section7 extends RPGElement {
   }
 }
   `];
-  
+
   static properties = {
     simple: {
       type: Boolean,
@@ -214,7 +215,7 @@ export class Section7 extends RPGElement {
 
   render() {
     const renderRace = () => {
-      const { camp, race, race_key } = this.save;
+      const { camp, race, race_key } = gameStore;
       const r = races[race_key];
       return html`<rpg-box class="race">
   <div class="race_header">
@@ -308,83 +309,72 @@ export class Section7 extends RPGElement {
   <rpg-action action="next">(1) 继续</rpg-action>
 </rpg-box>`
     }
-    
+
     return html`<rpg-box class="container">
   <div class="title">转生服务中心</div>
-  <el-button class="selection" ?active="${this.save?.selection}" @click="${this.switchSelection}">自选模式</el-button>
-  <div class="row center">${this.save?.selection ? '请选择你的阵营' : '请先投一颗骰子决定你的阵营'}</div>
-  ${!this.save || this.save.selection ? nothing : 
+  <el-button class="selection" ?active="${gameStore.selection}" @click="${this.switchSelection}">自选模式</el-button>
+  <div class="row center">${gameStore.selection ? '请选择你的阵营' : '请先投一颗骰子决定你的阵营'}</div>
+  ${gameStore.selection ? nothing :
     html`<div class="row center" style="margin-top: 5px">
-      <rpg-dice sides="6" @dice="${this.diceCamp}" ?disabled="${!this.save || this.save.camp}"></rpg-dice>
+      <rpg-dice sides="6" @dice="${this.diceCamp}" ?disabled="${gameStore.camp}"></rpg-dice>
     </div>`
   }
   <div class="row center">
-    <rpg-box class="camp camp1" active="${this.save?.camp === 1 || nothing}" @click="${() => this.save?.selection && this.updateCamp(1)}">
+    <rpg-box class="camp camp1" active="${gameStore.camp === 1 || nothing}" @click="${() => gameStore.selection && this.updateCamp(1)}">
       <div class="color_random">骰子点数 1-3</div>
       <div class="color_camp1">英雄阵营</div>
     </rpg-box>
-    <rpg-box class="camp camp2" active="${this.save?.camp === 2 || nothing}" @click="${() => this.save?.selection && this.updateCamp(2)}">
+    <rpg-box class="camp camp2" active="${gameStore.camp === 2 || nothing}" @click="${() => gameStore.selection && this.updateCamp(2)}">
       <div class="color_random">骰子点数 4-6</div>
       <div class="color_shadow">暗影阵营</div>
     </rpg-box>
   </div>
-  ${this.save?.camp ? html`<div class="row center">${this.save?.selection ? '请选择一颗骰子决定你的种族': '请再投一颗骰子决定你的种族'}</div>
-  ${!this.save?.selection ? 
+  ${gameStore.camp ? html`<div class="row center">${gameStore.selection ? '请选择一颗骰子决定你的种族': '请再投一颗骰子决定你的种族'}</div>
+  ${!gameStore.selection ?
     html`<div class="row center" style="margin-top: 5px">
-      <rpg-dice sides="6" @dice="${this.diceRace}" ?disabled="${!this.save || this.save.race}"></rpg-dice>
+      <rpg-dice sides="6" @dice="${this.diceRace}" ?disabled="${gameStore.race}"></rpg-dice>
     </div>` :
     html`<div class="select-race">
-      <rpg-dice sides="6" data-dice="1" disabled active="${this.save?.race === 1 || nothing}" @click="${this.updateRace.bind(this, 1)}"></rpg-dice>
-      <rpg-dice sides="6" data-dice="2" disabled active="${this.save?.race === 2 || nothing}" @click="${this.updateRace.bind(this, 2)}"></rpg-dice>
-      <rpg-dice sides="6" data-dice="3" disabled active="${this.save?.race === 3 || nothing}" @click="${this.updateRace.bind(this, 3)}"></rpg-dice>
-      <rpg-dice sides="6" data-dice="4" disabled active="${this.save?.race === 4 || nothing}" @click="${this.updateRace.bind(this, 4)}"></rpg-dice>
-      <rpg-dice sides="6" data-dice="5" disabled active="${this.save?.race === 5 || nothing}" @click="${this.updateRace.bind(this, 5)}"></rpg-dice>
-      <rpg-dice sides="6" data-dice="6" disabled active="${this.save?.race === 6 || nothing}" @click="${this.updateRace.bind(this, 6)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="1" disabled active="${gameStore.race === 1 || nothing}" @click="${this.updateRace.bind(this, 1)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="2" disabled active="${gameStore.race === 2 || nothing}" @click="${this.updateRace.bind(this, 2)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="3" disabled active="${gameStore.race === 3 || nothing}" @click="${this.updateRace.bind(this, 3)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="4" disabled active="${gameStore.race === 4 || nothing}" @click="${this.updateRace.bind(this, 4)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="5" disabled active="${gameStore.race === 5 || nothing}" @click="${this.updateRace.bind(this, 5)}"></rpg-dice>
+      <rpg-dice sides="6" data-dice="6" disabled active="${gameStore.race === 6 || nothing}" @click="${this.updateRace.bind(this, 6)}"></rpg-dice>
     </div>`
   }` : nothing}
 </rpg-box>
-${this.save?.race_key ? renderRace(): nothing}
+${gameStore.race_key ? renderRace(): nothing}
     `;
   }
-  
-  updateSave(key, value) {
-    this.save[key] = value;
-    this.requestUpdate()
-    this.dispatchEvent(new CustomEvent('action', {
-      bubbles: true,
-      composed: true,
-      cancelable: false,
-      detail: {
-        action: 'update_save',
-        key: key,
-        value: value,
-      },
-    }));
+
+  setup() {
+    gameStore.addHost(this);
   }
-  
+
   switchSelection() {
-    this.updateSave('selection', !this.save?.selection);
+    gameStore.selection = !gameStore.selection;
   }
-  
+
   diceCamp(e) {
     this.updateCamp(e.detail.dice <= 3 ? 1 : 2);
   }
-  
+
   updateCamp(camp) {
-    this.updateSave('camp', camp);
-    if (this.save.race) this.updateRaceKey();
+    gameStore.camp = camp;
+    if (gameStore.race) this.updateRaceKey();
   }
-  
+
   diceRace(e) {
     this.updateRace(e.detail.dice);
   }
-  
+
   updateRace(race) {
-    this.updateSave('race', race);
+    gameStore.race = race;
     this.updateRaceKey();
   }
-  
+
   updateRaceKey() {
-    this.updateSave('race_key', race_key_map[this.save.camp - 1][this.save.race - 1]);
+    gameStore.race_key = race_key_map[gameStore.camp - 1][gameStore.race - 1];
   }
 }

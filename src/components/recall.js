@@ -1,5 +1,5 @@
 import { RPGElement, html, css, repeat, nothing } from '/src/element.js';
-import { History } from '/src/utils/history.js';
+import { History } from '/src/core/history.js';
 
 
 class Recall extends RPGElement {
@@ -8,7 +8,7 @@ rpg-box {
   margin: 15px 0;
 }
   `];
-  
+
   static properties = {
     save: {
       type: Object,

@@ -1,4 +1,5 @@
 import { RPGElement, html, css } from '/src/element.js';
+import { gameStore } from '/src/core/game-store.js';
 
 export class TitleScreen extends RPGElement {
   static get styles() {
@@ -52,28 +53,28 @@ el-button::part(el-button):active {
 }
     `];
   }
-  
+
   static properties = {
     save: {
       type: Object,
       state: true,
     },
   }
-  
+
   render() {
     return html`
 <rpg-box>
   <h2 class="main-title"><span class="text-gradient gradient1">伪娘</span><span class="text-gradient gradient2">转生</span><span style="color: #709fe5">到</span><br class="mobile-only"><span class="text-gradient gradient3">淫乱</span><span class="text-gradient gradient4">世界</span><span style="color: #ef9b41">跑团</span> <span style="color: #e8ef3f">RPG!</span><span style="font-size: 14px; margin-left: 15px">Ver. 2.2</span></h2>
 </rpg-box>
 <div class="controls">
-  <el-button text style="--el-button-text-color: #8d54c9;" ?disabled="${!this.save?.section}" @click="${this.continueGame}">继续游戏</el-button>
+  <el-button text style="--el-button-text-color: #8d54c9;" ?disabled="${!gameStore.section}" @click="${this.continueGame}">继续游戏</el-button>
   <el-button text style="--el-button-text-color: #f26ed4;" @click="${this.startGame}">从头开始</el-button>
   <el-button text data-action="saves" style="--el-button-text-color: #38b827" @click="${this.showSaves}">存档</el-button>
   <el-button text data-action="settings" style="--el-button-text-color: #ea99a2" @click="${this.showSettings}">设置</el-button>
 </div>
     `;
   }
-  
+
   continueGame() {
     this.dispatchEvent(new CustomEvent('action', {
       bubbles: true,
@@ -84,7 +85,7 @@ el-button::part(el-button):active {
       }
     }));
   }
-  
+
   startGame() {
     this.dispatchEvent(new CustomEvent('action', {
       bubbles: true,
@@ -95,7 +96,7 @@ el-button::part(el-button):active {
       },
     }));
   }
-  
+
   showSaves() {
     this.dispatchEvent(new CustomEvent('action', {
       bubbles: true,
@@ -106,7 +107,7 @@ el-button::part(el-button):active {
       },
     }));
   }
-  
+
   showSettings() {
     this.dispatchEvent(new CustomEvent('action', {
       bubbles: true,
