@@ -54,13 +54,6 @@ el-button::part(el-button):active {
     `];
   }
 
-  static properties = {
-    save: {
-      type: Object,
-      state: true,
-    },
-  }
-
   render() {
     return html`
 <rpg-box>
@@ -71,6 +64,7 @@ el-button::part(el-button):active {
   <el-button text style="--el-button-text-color: #f26ed4;" @click="${this.startGame}">从头开始</el-button>
   <el-button text data-action="saves" style="--el-button-text-color: #38b827" @click="${this.showSaves}">存档</el-button>
   <el-button text data-action="settings" style="--el-button-text-color: #ea99a2" @click="${this.showSettings}">设置</el-button>
+  <el-button text style="--el-button-text-color: #bc2d1f" @click="${this.toChapter0}">图文版</el-button>
 </div>
     `;
   }
@@ -115,6 +109,18 @@ el-button::part(el-button):active {
       cancelable: false,
       detail: {
         action: 'show_settings',
+      },
+    }));
+  }
+
+  toChapter0() {
+    this.dispatchEvent(new CustomEvent('action', {
+      bubbles: true,
+      composed: true,
+      cancelable: false,
+      detail: {
+        action: 'to_section',
+        section: 'chapter0',
       },
     }));
   }

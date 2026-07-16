@@ -1,4 +1,5 @@
 export * from './title-screen.js';
+export * from './chapter0.js';
 export * from './page404.js';
 export * from './page500.js';
 export * from './section0.js';

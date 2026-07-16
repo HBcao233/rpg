@@ -53,7 +53,7 @@ class Dice extends ElElement {
   background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSI1IiB5PSI1IiB3aWR0aD0iOTAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgc3R5bGU9ImZpbGw6I2ZmZjtzdHJva2U6IzMzMztzdHJva2Utd2lkdGg6MjsiLz48Y2lyY2xlIGN4PSIyNSIgY3k9IjI1IiByPSI4IiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iMjUiIGN5PSI1MCIgcj0iOCIgZmlsbD0iIzMzMyIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iNzUiIHI9IjgiIGZpbGw9IiMzMzMiLz48Y2lyY2xlIGN4PSI3NSIgY3k9IjI1IiByPSI4IiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iNzUiIGN5PSI1MCIgcj0iOCIgZmlsbD0iIzMzMyIvPjxjaXJjbGUgY3g9Ijc1IiBjeT0iNzUiIHI9IjgiIGZpbGw9IiMzMzMiLz48L3N2Zz4=');
 }
   `;
-  
+
   static properties = {
     sides: {
       type: Number,
@@ -77,19 +77,19 @@ class Dice extends ElElement {
       default: 6,
     },
   }
-  
+
   onMounted() {
     this.addEventListener('click', this);
   }
-  
+
   onBeforeUnmounted() {
     this.removeEventListener('click', this);
   }
-  
+
   handleEvent(e) {
     if (e.type === 'click') this.onClick();
   }
-  
+
   onClick() {
     if (this.disabled) return;
     if (this.rolling) {

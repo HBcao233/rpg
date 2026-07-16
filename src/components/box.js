@@ -69,7 +69,7 @@ class Box extends ElElement {
   background: #1f3c20;
 }
   `
-  
+
   render() {
     return html`<slot></slot>`;
   }

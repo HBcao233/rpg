@@ -12,7 +12,7 @@ export class Section5 extends RPGElement {
 }
     `];
   }
-  
+
   static properties = {
     simple: {
       type: Boolean,
