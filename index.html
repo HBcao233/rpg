@@ -14,5 +14,22 @@
 </head>
 <body>
   <rpg-app></rpg-app>
+  <script>
+    const leave_tip = '您确定要离开此页面吗？系统可能不会保存您的更改。';
+
+    history.pushState(null, null, document.URL);
+
+    window.addEventListener('popstate', function () {
+      history.pushState(null, null, document.URL);
+
+      alert(leave_tip);
+    });
+
+    window.addEventListener('beforeunload', function (event) {
+      event.preventDefault();
+      event.returnValue = leave_tip;
+      return leave_tip;
+    });
+  </script>
 </body>
 </html>
