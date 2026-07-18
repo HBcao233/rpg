@@ -102,25 +102,25 @@ class Dice extends ElElement {
       this.dice = count;
       if (this.sides > 6) {
         this.dice.innerText = count;
-      } 
+      }
     }, 100);
-    
+
     const duration = 1500 + Math.random() * 500;
     this.timer2 = setTimeout(() => {
       this.randomResult();
     }, duration);
   }
-  
+
   randomResult() {
     clearInterval(this.timer);
     clearInterval(this.timer2);
     this.rolling = false;
-    
+
     const result = Math.floor(Math.random() * this.sides) + 1;
     this.dice = result;
     if (this.sides > 6) {
       dice.innerText = result;
-    } 
+    }
     const event = new CustomEvent('dice', {
       bubbles: true,
       composed: true,

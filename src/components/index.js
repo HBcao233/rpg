@@ -8,3 +8,4 @@ export * from './map.js';
 export * from './options.js';
 export * from './inventory.js';
 export * from './recall.js';
+export * from './item.js';

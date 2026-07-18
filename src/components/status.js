@@ -126,7 +126,7 @@ el-button[disabled]::part(el-button) {
   </el-tooltip>
 </div>`;
   }
-  
+
   showDialog(name) {
     this.dispatchEvent(new CustomEvent('action', {
       bubbles: true,
@@ -137,7 +137,7 @@ el-button[disabled]::part(el-button) {
       },
     }));
   }
-  
+
   showInventory() {
     this.showDialog('inventory');
   }

@@ -1,13 +1,15 @@
 import { RPGElement, html, css, until, unsafeHTML, repeat } from '/src/element.js';
-import { 
-  range, 
-  getValue, setValue, 
-  getTime, formatDateTime, formatDateTimeLess, 
+import {
+  range,
+  getValue, setValue,
+  getTime, formatDateTime, formatDateTimeLess,
   downloadFile,
 } from '/src/utils/index.js';
 import '/assets/core-js_v3.47.0-actual-iterator-map.esm.js';
 import { getSectionSummary, sectionSummary2html, cutSectionSummary } from '/src/utils/section-summary.js';
 import { gz64_decode, gz64_encode } from '/src/utils/coding.js';
+import { gameStore } from '/src/core/game-store.js';
+import { races } from '/src/constants/index.js';
 
 
 // 最大存档数量
@@ -51,15 +53,11 @@ rpg-box:first-child {
   height: 73px;
 }
   `];
-  
+
   static properties = {
     open: {
       type: Boolean,
       reflect: true,
-    },
-    save: {
-      type: Object,
-      state: true,
     },
     patch: {
       type: Number,
@@ -67,17 +65,17 @@ rpg-box:first-child {
       default: 10,
     },
   }
-  
+
   render() {
     const renderDesc = (i) => {
       if (this.isEmpty(i)) return '空'
       if (i === 0) {
-        return until(getSectionSummary(this.save.section).then(sectionSummary2html).then(unsafeHTML), '空');
+        return until(getSectionSummary(gameStore.section).then(sectionSummary2html).then(unsafeHTML), '空');
       }
       return unsafeHTML(sectionSummary2html(this.saves[i].desc));
     }
     const renderTime = (i) => {
-      const create_time = i === 0 ? this.save?.update_time : this.saves?.[i]?.create_time;
+      const create_time = i === 0 ? gameStore.update_time : this.saves?.[i]?.create_time;
       return this.isEmpty(i) ? '' : formatDateTimeLess(create_time);
     }
     const renderItems = (patch) => {
@@ -108,16 +106,17 @@ rpg-box:first-child {
   </div>
 </rpg-box>`);
     }
-    
+
     return html`<el-dialog title="存档">${renderItems(this.patch)}</el-dialog>`;
   }
-  
+
   setup() {
     getValue('saves').then((v) => {
       this.saves = v ?? {};
+      this.requestUpdate();
     });
   }
-  
+
   firstUpdated() {
     this.dialog = this.renderRoot.firstElementChild;
     requestAnimationFrame(() => {
@@ -131,41 +130,41 @@ rpg-box:first-child {
             }
           }
         });
-      }, { 
+      }, {
         root: this.dialog.content,
-        rootMargin: '100px', 
-        threshold: 0, 
+        rootMargin: '100px',
+        threshold: 0,
       });
-      
+
       // 观察占位符
       this.shadowRoot.querySelectorAll('.placeholder').forEach(el => {
         this.observer.observe(el);
       });
     });
   }
-  
+
   get open() {
     return this.dialog?.open;
   }
-  
+
   set open(v) {
     if (this.dialog) this.dialog.open = !!v;
   }
-  
+
   show() {
     this.open = true;
   }
-  
+
   hide() {
     this.open = false;
   }
-  
+
   isEmpty(i) {
-    return i === 0 ? !this.save?.section : !this.saves?.[i]?.save;
+    return i === 0 ? !gameStore.section : !this.saves?.[i]?.save;
   }
 
   loadSave(i, e) {
-    if (i === NaN) return; 
+    if (i === NaN) return;
     if (this.isEmpty(i)) return alert('存档为空');
     let save = null;
     if (i !== 0) {
@@ -193,43 +192,42 @@ rpg-box:first-child {
       },
     }));
   }
-  
+
   async _saveSave() {
     let race_name = '';
-    if (this.save.race_key) {
+    if (gameStore.race_key) {
       let race_color = '#ffb700';
-      if (this.save.camp == 2) 
+      if (gameStore.camp == 2) 
         race_color = '#7530a4';
-      race_name = `ō${races[save.race_key].name}óǒ${race_color}ò: `;
+      race_name = `ō${races[gameStore.race_key].name}óǒ${race_color}ò: `;
     }
-    const summary = await getSectionSummary(this.save.section);
+    const summary = await getSectionSummary(gameStore.section);
     const desc = cutSectionSummary(race_name + summary);
     return {
-      create_time: this.save.update_time,
+      create_time: gameStore.update_time,
       desc: desc,
-      save: gz64_encode(JSON.stringify(this.save)),
+      save: gz64_encode(JSON.stringify(gameStore._store)),
     }
   }
-  
+
   async saveSave(i, e) {
     if (i <= 0) return;
     if (i > MAX_SAVE_NUM) return alert(`最多只能存 ${MAX_SAVE_NUM} 个存档`);
-    if (!this.save?.section) return alert('自动存档为空');
+    if (!gameStore.section) return alert('自动存档为空');
     const save = await this._saveSave();
     save.create_time = getTime();
     this.saves[i] = save;
     this.requestUpdate()
     setValue('saves', this.saves);
   }
-  
+
   deleteSave(i) {
     if (i > MAX_SAVE_NUM) return alert('存档不存在');
     let name = '自动存档';
     if (i > 0) name = '存档 ' + i;
     if (!confirm(`确定要删除 ${name} 吗？`)) return;
     if (i === 0) {
-      this.save = {};
-      this.requestUpdate();
+      gameStore.reset();
       this.dispatchEvent(new CustomEvent('action', {
         bubbles: true,
         composed: true,
@@ -244,13 +242,13 @@ rpg-box:first-child {
     this.requestUpdate();
     setValue('saves', this.saves);
   }
-  
+
   async exportSave(i, e) {
     if (i > MAX_SAVE_NUM) return alert('存档不存在');
     let jsonString, create_time;
     if (i === 0) {
       const save = await this._saveSave();
-      create_time = this.save.update_time;
+      create_time = gameStore.update_time;
       jsonString = JSON.stringify(save);
     } else {
       if (!this.saves[i].save) return alert('存档为空');
@@ -260,12 +258,13 @@ rpg-box:first-child {
 
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
+    console.log(create_time)
     create_time = formatDateTime(create_time * 1000).replaceAll(':', '-').replace(' ', '_');
     const name = `rbqrpg_save_${create_time}.json`
     downloadFile(url, name);
     URL.revokeObjectURL(url);
   }
-  
+
   importSave(i) {
     if (i <= 0 || i > MAX_SAVE_NUM) return alert('存档不存在');
     const input = document.createElement('input');

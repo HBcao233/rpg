@@ -65,9 +65,6 @@ el-footer {
   setup() {
     gameStore.addHost(this);
 
-    getValue('save').then((v) => {
-      gameStore.set(v ?? {});
-    });
     getValue('config').then((v) => {
       this.config = v ?? {};
     });
@@ -142,12 +139,12 @@ el-footer {
         break;
       case 'load_save':
         if (e.detail.save) {
-          this.save = e.detail.save
+          gameStore.set(e.detail.save);
         }
         this.toSection(this.save.section);
         break;
       case 'delete_save':
-        this.save = {}
+        gameStore.reset();
         this.setSave();
         break;
 
@@ -212,35 +209,30 @@ el-footer {
 
   showSaves() {
     this.showDialog('saves').then((dialog) => {
-      dialog.save = this.save;
       dialog.show();
     });
   }
 
   showSettings() {
     this.showDialog('settings').then((dialog) => {
-      dialog.config = this.config;
       dialog.show();
     });
   }
 
   showMap() {
     this.showDialog('map').then((map) => {
-      map.save = this.save;
       this.map = map;
     });
   }
 
   showStatus() {
     this.showDialog('status').then((status) => {
-      status.save = this.save;
       this.status = status;
     });
   }
 
   showOptions() {
     this.showDialog('options').then((dialog) => {
-      this.options_dialog = dialog;
       dialog.show();
     });
   }
@@ -253,7 +245,6 @@ el-footer {
 
   showRecall() {
     this.showDialog('recall').then((dialog) => {
-      dialog.save = this.save;
       dialog.show();
     });
   }

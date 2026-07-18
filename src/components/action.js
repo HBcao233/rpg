@@ -29,26 +29,26 @@ export class Action extends ElElement {
       attribute: true,
     },
   }
-  
+
   render() {
     return html`<slot></slot>`;
   }
-  
+
   onMounted() {
     this.addEventListener('click', this);
   }
-  
+
   onBeforeUnmounted() {
     this.removeEventListener('click', this);
   }
-  
+
   handleEvent(e) {
     const handlers = {
       'click': this.onClick,
     }
     handlers[e.type].call(this, e);
   }
-  
+
   onClick(e) {
     if (this.disabled) return;
     this.dispatchEvent(new CustomEvent('action', {

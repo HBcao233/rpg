@@ -30,7 +30,8 @@ export const enemy_races = {
     desc: '它们外貌各异，可能是巨大的野生昆虫也可能是高级的人形魔物。在新规则的影响下，它们无法与自己的同类交配，只能通过让冒险者们受精，从而让她们产下自己的卵来繁殖后代。如果你一直被昆虫族受精产卵的话，它们体内的毒素和媚药会慢慢让你对此上瘾。',
     curse: 'insect',
   },
-}
+};
+
 // 诅咒
 export const curses = {
   'slave': {
@@ -184,8 +185,9 @@ export const curses = {
     ]
   },
 };
+
 // 敌人
-export const enemys = {
+export const enemies = {
   'thieves_brothers': {
     name: '盗贼兄弟',
     race: 'human',
@@ -468,4 +470,14 @@ export const enemys = {
       }
     ],
   },
-}
+};
+
+// 第一章怪物
+export const chapter1_enemies = [
+  'thieves_brothers',
+  'werewolf',
+  'bee',
+  'normal_orcish',
+  'sorceress',
+  'aphrodisiac_plant',
+];

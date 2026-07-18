@@ -7,6 +7,9 @@ class GameStore {
   constructor() {
     this._store = {};
     this._hosts = new Set();
+    getValue('save').then((v) => {
+      this.set(v ?? {});
+    });
   }
 
   addHost(host) {
@@ -51,6 +54,10 @@ class GameStore {
 
   reset() {
     this.set({});
+  }
+
+  get update_time() {
+    return this._store.update_time;
   }
 
   // 进度
@@ -101,6 +108,10 @@ class GameStore {
     this._save();
   }
 
+  get history() {
+    return this._store.history;
+  }
+
   equalHistory(target, check) {
     if (!check) return false;
     return target.id === check.id;
@@ -109,22 +120,20 @@ class GameStore {
   findHistory(target) {
     for (let i = this._store.history.length - 1; i >= 0; i--) {
       const h = this._store.history[i];
-      if (this.equalHistory(target, h)) return h;
+      if (this.equalHistory(target, h)) return i;
     }
-    return null;
+    return -1;
   }
 
   pushHistory(history) {
     if (!this._store.history) this._store.history = [];
     const h = this.findHistory(history);
-    if (!h) {
+    if (h === -1) {
       this._store.history.push(history);
     } else {
-      if (history.type == 'select_race') {
-        h.camp = history.camp;
-        h.race = history.race;
-      }
+      this._store.history[h] = history;
     }
+    this._save();
   }
 }
 

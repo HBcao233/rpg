@@ -1,12 +1,30 @@
 import { html, safeHTML, until } from '/src/element.js';
 import { getSectionSummary, sectionSummary2html } from '/src/utils/section-summary.js';
-import { races, race_key_map } from '/src/constants/index.js';
+import { races, race_key_map, enemies } from '/src/constants/index.js';
 
 
 export class History {
   static TO_SECTION = 'to_section';
   static SELECT_RACE = 'select_race';
   static DICE = 'dice';
+  static SELECT_ENEMY = 'select_enemy';
+
+  static stringify(history) {
+    switch (history.type) {
+      case this.TO_SECTION:
+        return until(getSectionSummary(history.section).then(sectionSummary2html).then(safeHTML));
+      case this.SELECT_RACE:
+        const race_key = race_key_map[history.camp - 1][history.race - 1];
+        const r = races[race_key];
+        return html`选择职业 <span class="color_camp${r.camp}">${r.name}</span>`
+        break;
+      case this.DICE:
+        break;
+      case this.SELECT_ENEMY:
+        return html`骰子停在了 ${history.dice}, 敌人 ${enemies[history.enemy_key].name} 出现了。`;
+    }
+  }
+
 
   static to_section(section) {
     return {
@@ -38,17 +56,13 @@ export class History {
 
   }
 
-  static stringify(history) {
-    switch (history.type) {
-      case this.TO_SECTION:
-        return until(getSectionSummary(history.section).then(sectionSummary2html).then(safeHTML));
-      case this.SELECT_RACE:
-        const race_key = race_key_map[history.camp - 1][history.race - 1];
-        const r = races[race_key];
-        return html`选择职业 <span class="color_camp${r.camp}">${r.name}</span>`
-        break;
-      case this.DICE:
-        break;
+  static select_enemy(key, dice, enemy_key) {
+    return {
+      type: this.SELECT_ENEMY,
+      key,
+      dice,
+      enemy_key,
+      id: `${this.SELECT_ENEMY}-${key}`,
     }
   }
 }
